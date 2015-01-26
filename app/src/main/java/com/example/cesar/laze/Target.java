@@ -1,13 +1,12 @@
 package com.example.cesar.laze;
 
 /**
- * Created by Cesar on 1/24/2015.
- * Basic Ray object
+ * Created by Cesar on 1/26/2015.
+ * Basic pint class
  */
-public class Ray {
+public class Target {
     private int x;
     private int y;
-    private int direction;
 
     public int getX() {
         return x;
@@ -24,13 +23,4 @@ public class Ray {
     public void setY(int y) {
         this.y = y;
     }
-
-    public int getDirection() {
-        return direction;
-    }
-
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
 }
-

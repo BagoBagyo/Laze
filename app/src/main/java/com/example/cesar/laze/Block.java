@@ -56,4 +56,12 @@ public class Block {
     public void setWestFace(List<Integer> westFace) {
         this.westFace = westFace;
     }
+
+    public Block(Type type, List<Integer> northFace, List<Integer> eastFace, List<Integer> southFace, List<Integer> westFace) {
+        this.type = type;
+        this.northFace = northFace;
+        this.eastFace = eastFace;
+        this.southFace = southFace;
+        this.westFace = westFace;
+    }
 }
