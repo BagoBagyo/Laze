@@ -1,5 +1,7 @@
 package com.example.cesar.laze;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +9,8 @@ import java.util.ArrayList;
  * LazeGame Model class
  */
 public class LazeGame {
+    final static String tag = "LAZE: LazeGame";
+
     private Block[][] blockGrid;
     private ArrayList<Ray> sources;
     private ArrayList<Location> targets;
@@ -24,7 +28,7 @@ public class LazeGame {
                 ArrayList<Ray> nullRay = new ArrayList<>();
                 nullRay.add(new Ray(0, 0, Ray.Type.RED, 0));
 
-                blockGrid[i][j] = new Block(i, j, Block.Type.OPEN, nullRay);
+                blockGrid[i][j] = new Block(i*2+1, j*2+1, Block.Type.OPEN, nullRay);
 
             }
         }
@@ -94,14 +98,36 @@ public class LazeGame {
     }
 
     private void addRayToBlock(Ray ray) {
+        int rayX = ray.getX();
+        int rayY = ray.getY();
 
+        switch (ray.getDirection()) {
+            case 45:
+                if (rayX % 2 == 0) blockGrid[++rayX/2][rayY/2].getRays().add(ray);
+                else if (rayY % 2 == 0) blockGrid[rayX/2][--rayY/2].getRays().add(ray);
+                break;
+            case 135:
+                if (rayX % 2 == 0) blockGrid[++rayX/2][rayY/2].getRays().add(ray);
+                else if (rayY % 2 == 0) blockGrid[rayX/2][++rayY/2].getRays().add(ray);
+                break;
+            case 225:
+                if (rayX % 2 == 0) blockGrid[--rayX/2][rayY/2].getRays().add(ray);
+                else if (rayY % 2 == 0) blockGrid[rayX/2][++rayY/2].getRays().add(ray);
+                break;
+            case 315:
+                if (rayX % 2 == 0) blockGrid[--rayX/2][rayY/2].getRays().add(ray);
+                else if (rayY % 2 == 0) blockGrid[rayX/2][--rayY/2].getRays().add(ray);
+                break;
+            default:
+                Log.e(tag, "Invalid Direction in addRayToBlock()");
+        }
     }
 
     private Ray propigateRay(Ray ray) {
-        Ray newRay;
+        //Ray newRay;
 
 
-
-        return newRay;
+        return ray;
+        //return newRay;
     }
 }

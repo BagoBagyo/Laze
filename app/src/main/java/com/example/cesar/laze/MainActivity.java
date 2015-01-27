@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
-    final String LAZE_MAIN = "LAZE_MAIN";
+    final static String tag = "LAZE: LAZE_MAIN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
 
         myLazeGame.update();
 
-        Log.d(LAZE_MAIN, "Finished onCreate");
+        Log.d(tag, "Finished onCreate");
     }
 
 
