@@ -1,17 +1,33 @@
 package com.example.cesar.laze;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends ActionBarActivity {
+    final String LAZE_MAIN = "LAZE_MAIN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ArrayList<Ray> mySources = new ArrayList<>();
+        mySources.add(new Ray(4, 1, Ray.Type.RED, 225));
+
+        ArrayList<Location> myTargets = new ArrayList<>();
+        myTargets.add(new Location(1, 4));
+
+        LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);
+
+        myLazeGame.update();
+
+        Log.d(LAZE_MAIN, "Finished onCreate");
     }
 
 

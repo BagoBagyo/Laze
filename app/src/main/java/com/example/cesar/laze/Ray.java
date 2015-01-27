@@ -2,22 +2,24 @@ package com.example.cesar.laze;
 
 /**
  * Created by Cesar on 1/24/2015.
- * Basic Ray object
- */
-public class Source {
+ * Ray class
+ * Defines a ray object (block incident ray)
+ *
+ * location : location on playfield grid.
+ * type : kind of laser ray (red, green, etc).
+ * direction : compass direction ray is emitting (45, 135, 225, 315).
+*/
+
+public class Ray extends Location {
     enum Type {
         RED, GREEN
     }
-
     private Type type;
-    private int x;
-    private int y;
     private int direction;
 
-    public Source(Type type, int x, int y, int direction) {
+    public Ray(int x, int y, Type type, int direction) {
+        super(x, y);
         this.type = type;
-        this.x = x;
-        this.y = y;
         this.direction = direction;
     }
 
@@ -27,22 +29,6 @@ public class Source {
 
     public void setType(Type type) {
         this.type = type;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public int getDirection() {

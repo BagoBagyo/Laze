@@ -7,21 +7,101 @@ import java.util.ArrayList;
  * LazeGame Model class
  */
 public class LazeGame {
+    private Block[][] blockGrid;
+    private ArrayList<Ray> sources;
+    private ArrayList<Location> targets;
+    private int playfieldWidth;
+    private int playfieldHeight;
 
-    static final int GRID_WIDTH = 4;
-    static final int GRID_HEIGHT = 4;
+    public LazeGame(int blockGridWidth, int blockGridHeight, ArrayList<Ray> sources, ArrayList<Location> targets) {
+        playfieldWidth = blockGridWidth * 2;
+        playfieldHeight = blockGridHeight * 2;
 
-    public LazeGame(int gridWidth, int gridHeight) {
+        blockGrid = new Block[blockGridWidth][blockGridHeight];
 
-        Block[][] playGrid = new Block[gridWidth][gridHeight];
+        for (int i = 0; i < blockGridWidth; i++) {
+            for (int j = 0; j < blockGridHeight; j++) {
+                ArrayList<Ray> nullRay = new ArrayList<>();
+                nullRay.add(new Ray(0, 0, Ray.Type.RED, 0));
 
-        for (int i = 0; i < gridWidth; i++) {
-            for (int j = 0; j < gridHeight; j++) {
-                playGrid[i][j] = new Block(Block.Type.OPEN, new ArrayList<Integer>(0), new ArrayList<Integer>(0), new ArrayList<Integer>(0), new ArrayList<Integer>(0));
+                blockGrid[i][j] = new Block(i, j, Block.Type.OPEN, nullRay);
 
+            }
+        }
+        this.sources = sources;
+        this.targets = targets;
+    }
+
+    public Block[][] getBlockGrid() {
+        return blockGrid;
+    }
+
+    public void setBlockGrid(Block[][] blockGrid) {
+        this.blockGrid = blockGrid;
+    }
+
+    public ArrayList<Ray> getSources() {
+        return sources;
+    }
+
+    public void setSources(ArrayList<Ray> sources) {
+        this.sources = sources;
+    }
+
+    public ArrayList<Location> getTargets() {
+        return targets;
+    }
+
+    public void setTargets(ArrayList<Location> targets) {
+        this.targets = targets;
+    }
+
+    public void update() {
+        ArrayList<Ray> currentRays = sources;
+        for (Ray ray : currentRays) {
+            if (rayInPlay(ray) || !rayHitTarget(ray)) {
+                addRayToBlock(ray);
+                currentRays.add(propigateRay(ray));
+
+            } else {
+                // Ray is either about to go out of bounds or has hit a target
             }
         }
     }
 
+    private boolean rayInPlay(Ray ray) {
+        if ((ray.getX() == 0 && (ray.getDirection() == 225 || ray.getDirection() == 315)) ||
+                (ray.getY() == 0 && (ray.getDirection() == 315 || ray.getDirection() == 45)) ||
+                (ray.getX() == playfieldWidth && (ray.getDirection() == 45 || ray.getDirection() == 135)) ||
+                (ray.getY() == playfieldHeight && (ray.getDirection() == 135 || ray.getDirection() == 225)) ||
+                (ray.getX() == 0 && ray.getY() == 0 && ray.getDirection() != 135) ||
+                (ray.getX() == 0 && ray.getY() == playfieldHeight && ray.getDirection() != 45) ||
+                (ray.getX() == playfieldWidth && ray.getY() == 0 && ray.getDirection() != 225) ||
+                (ray.getX() == playfieldWidth && ray.getY() == playfieldHeight && ray.getDirection() != 315)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
+    private boolean rayHitTarget(Ray ray) {
+        for (Location targetLocation : targets) {
+            if ((ray.getX() == targetLocation.getX()) && (ray.getY() == targetLocation.getY())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addRayToBlock(Ray ray) {
+
+    }
+
+    private Ray propigateRay(Ray ray) {
+        Ray newRay;
+
+
+
+        return newRay;
+    }
 }

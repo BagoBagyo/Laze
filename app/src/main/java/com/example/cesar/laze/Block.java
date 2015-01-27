@@ -1,21 +1,29 @@
 package com.example.cesar.laze;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by Cesar on 1/24/2015.
- * Basic Block class.
+ * Block class
+ * Defines a Block object on the playfield.
+ *
+ * location : location on playfield grid.
+ * type : kind of block  (open, mirror, glass, etc).
+ * rays : Array list of rays incident on the block.
  */
-public class Block {
+public class Block extends Location {
     enum Type {
         OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
     }
 
     private Type type;
-    private List<Integer> northFace;
-    private List<Integer> eastFace;
-    private List<Integer> southFace;
-    private List<Integer> westFace;
+    private ArrayList<Ray> rays;
+
+    public Block(int x, int y, Type type, ArrayList<Ray> rays) {
+        super(x, y);
+        this.type = type;
+        this.rays = rays;
+    }
 
     public Type getType() {
         return type;
@@ -25,43 +33,11 @@ public class Block {
         this.type = type;
     }
 
-    public List<Integer> getNorthFace() {
-        return northFace;
+    public ArrayList<Ray> getRays() {
+        return rays;
     }
 
-    public void setNorthFace(List<Integer> northFace) {
-        this.northFace = northFace;
-    }
-
-    public List<Integer> getEastFace() {
-        return eastFace;
-    }
-
-    public void setEastFace(List<Integer> eastFace) {
-        this.eastFace = eastFace;
-    }
-
-    public List<Integer> getSouthFace() {
-        return southFace;
-    }
-
-    public void setSouthFace(List<Integer> southFace) {
-        this.southFace = southFace;
-    }
-
-    public List<Integer> getWestFace() {
-        return westFace;
-    }
-
-    public void setWestFace(List<Integer> westFace) {
-        this.westFace = westFace;
-    }
-
-    public Block(Type type, List<Integer> northFace, List<Integer> eastFace, List<Integer> southFace, List<Integer> westFace) {
-        this.type = type;
-        this.northFace = northFace;
-        this.eastFace = eastFace;
-        this.southFace = southFace;
-        this.westFace = westFace;
+    public void setRays(ArrayList<Ray> rays) {
+        this.rays = rays;
     }
 }
