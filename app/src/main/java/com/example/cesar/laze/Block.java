@@ -1,6 +1,6 @@
 package com.example.cesar.laze;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 
 /**
  * Created by Cesar on 1/24/2015.
@@ -17,9 +17,9 @@ public class Block extends Location {
     }
 
     private Type type;
-    private ArrayList<Ray> rays;
+    private ArrayDeque<Ray> rays;
 
-    public Block(int x, int y, Type type, ArrayList<Ray> rays) {
+    public Block(int x, int y, Type type, ArrayDeque<Ray> rays) {
         super(x, y);
         this.type = type;
         this.rays = rays;
@@ -33,11 +33,11 @@ public class Block extends Location {
         this.type = type;
     }
 
-    public ArrayList<Ray> getRays() {
+    public ArrayDeque<Ray> getRays() {
         return rays;
     }
 
-    public void setRays(ArrayList<Ray> rays) {
+    public void setRays(ArrayDeque<Ray> rays) {
         this.rays = rays;
     }
 }

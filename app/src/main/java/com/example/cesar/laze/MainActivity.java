@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -17,10 +17,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<Ray> mySources = new ArrayList<>();
+        ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(4, 1, Ray.Type.RED, 225));
 
-        ArrayList<Location> myTargets = new ArrayList<>();
+        ArrayDeque<Location> myTargets = new ArrayDeque<>();
         myTargets.add(new Location(1, 4));
 
         LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);

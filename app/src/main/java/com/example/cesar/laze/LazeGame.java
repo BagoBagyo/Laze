@@ -2,7 +2,9 @@ package com.example.cesar.laze;
 
 import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+
+import static com.example.cesar.laze.Block.Type.*;
 
 /**
  * Created by Cesar on 1/26/2015.
@@ -12,12 +14,13 @@ public class LazeGame {
     final static String tag = "LAZE: LazeGame";
 
     private Block[][] blockGrid;
-    private ArrayList<Ray> sources;
-    private ArrayList<Location> targets;
+    private ArrayDeque<Ray> sources;
+    private ArrayDeque<Location> targets;
+    private ArrayDeque<Ray> newRays;
     private int playfieldWidth;
     private int playfieldHeight;
 
-    public LazeGame(int blockGridWidth, int blockGridHeight, ArrayList<Ray> sources, ArrayList<Location> targets) {
+    public LazeGame(int blockGridWidth, int blockGridHeight, ArrayDeque<Ray> sources, ArrayDeque<Location> targets) {
         playfieldWidth = blockGridWidth * 2;
         playfieldHeight = blockGridHeight * 2;
 
@@ -25,10 +28,10 @@ public class LazeGame {
 
         for (int i = 0; i < blockGridWidth; i++) {
             for (int j = 0; j < blockGridHeight; j++) {
-                ArrayList<Ray> nullRay = new ArrayList<>();
-                nullRay.add(new Ray(0, 0, Ray.Type.RED, 0));
+                //ArrayDeque<Ray> nullRay = new ArrayDeque();
+                //nullRay.add(new Ray(0, 0, Ray.Type.RED, 0));
 
-                blockGrid[i][j] = new Block(i*2+1, j*2+1, Block.Type.OPEN, nullRay);
+                blockGrid[i][j] = new Block(i*2+1, j*2+1, OPEN, new ArrayDeque<Ray>());
 
             }
         }
@@ -44,51 +47,37 @@ public class LazeGame {
         this.blockGrid = blockGrid;
     }
 
-    public ArrayList<Ray> getSources() {
+    public ArrayDeque<Ray> getSources() {
         return sources;
     }
 
-    public void setSources(ArrayList<Ray> sources) {
+    public void setSources(ArrayDeque<Ray> sources) {
         this.sources = sources;
     }
 
-    public ArrayList<Location> getTargets() {
+    public ArrayDeque<Location> getTargets() {
         return targets;
     }
 
-    public void setTargets(ArrayList<Location> targets) {
+    public void setTargets(ArrayDeque<Location> targets) {
         this.targets = targets;
     }
 
     public void update() {
-        ArrayList<Ray> currentRays = sources;
-        for (int i = 0; i < currentRays.size(); ++i) {
-            Ray ray = currentRays.get(i);
+        ArrayDeque<Ray> currentRays = sources;
+        while (currentRays.isEmpty() == false) {
+            Ray ray = currentRays.pop();
             if (rayInPlay(ray) || !rayHitTarget(ray)) {
-                addRayToBlock(ray);
-                currentRays.add(propigateRay(ray));
+                newRays = propigateRay(ray);
+                for (Ray newRay : newRays) {
+                    currentRays.push(newRay);
+                }
 
             } else {
                 // Ray is either about to go out of bounds or has hit a target
             }
         }
     }
-
-/*    public void update() {
-        ArrayList<Ray> currentRays = sources;
-        int i = 0;
-        while (i < currentRays.size()){
-            Ray ray = currentRays.get(i);
-            if (rayInPlay(ray) || !rayHitTarget(ray)) {
-                addRayToBlock(ray);
-                currentRays.add(propigateRay(ray));
-
-            } else {
-                // Ray is either about to go out of bounds or has hit a target
-            }
-        i++;
-        }
-    } */
 
     private boolean rayInPlay(Ray ray) {
         if ((ray.getX() == 0 && (ray.getDirection() == 225 || ray.getDirection() == 315)) ||
@@ -114,37 +103,98 @@ public class LazeGame {
         return false;
     }
 
-    private void addRayToBlock(Ray ray) {
+    private ArrayDeque propigateRay(Ray ray) {
         int rayX = ray.getX();
         int rayY = ray.getY();
+        int blockX = -1;
+        int blockY = -1;
+        Block block;
+        ArrayDeque newRays = new ArrayDeque();
 
         switch (ray.getDirection()) {
             case 45:
-                if (rayX % 2 == 0) blockGrid[++rayX/2][rayY/2].getRays().add(ray);
-                else if (rayY % 2 == 0) blockGrid[rayX/2][--rayY/2].getRays().add(ray);
+                if (rayX % 2 == 0) {
+                    blockX = ++rayX;
+                    blockY= rayY;
+                } else {
+                    blockX = rayX;
+                    blockY = --rayY;
+                }
                 break;
             case 135:
-                if (rayX % 2 == 0) blockGrid[++rayX/2][rayY/2].getRays().add(ray);
-                else if (rayY % 2 == 0) blockGrid[rayX/2][++rayY/2].getRays().add(ray);
+                if (rayX % 2 == 0) {
+                    blockX = ++rayX;
+                    blockY = rayY;
+                } else {
+                    blockX = rayX;
+                    blockY = ++rayY;
+                }
                 break;
             case 225:
-                if (rayX % 2 == 0) blockGrid[--rayX/2][rayY/2].getRays().add(ray);
-                else if (rayY % 2 == 0) blockGrid[rayX/2][++rayY/2].getRays().add(ray);
+                if (rayX % 2 == 0) {
+                    blockX = --rayX;
+                    blockY = rayY;
+                } else {
+                    blockX = rayX;
+                    blockY = ++rayY;
+                }
                 break;
             case 315:
-                if (rayX % 2 == 0) blockGrid[--rayX/2][rayY/2].getRays().add(ray);
-                else if (rayY % 2 == 0) blockGrid[rayX/2][--rayY/2].getRays().add(ray);
+                if (rayX % 2 == 0) {
+                    blockX = --rayX;
+                    blockY= rayY;
+                } else {
+                    blockX = rayX;
+                    blockY = --rayY;
+                }
                 break;
             default:
-                Log.e(tag, "Invalid Direction in addRayToBlock()");
+                Log.e(tag, "Invalid Direction in propigateRay()");
+                break;
         }
+        blockX = blockX/2;
+        blockY = blockY/2;
+
+        block = blockGrid[blockX][blockY];
+        block.getRays().push(ray);
+
+        // generate exit Rays
+        switch (block.getType()) {
+            case BLACKHOLE:
+                break;
+            case CRYSTAL:
+                break;
+            case GLASS:
+                break;
+            case MIRROR:
+                break;
+            case OPEN:
+                switch (ray.getDirection()) {
+                    case 45:
+                        ray.setY(ray.getY()-1);
+                        break;
+                    case 135:
+                        ray.setY(ray.getY()+1);
+                        break;
+                    case 225:
+                        ray.setX(ray.getX()-1);
+                        ray.setY(ray.getY()+1);
+                        break;
+                    case 315:
+                        ray.setX(ray.getX()+1);
+                        break;
+                    default:
+                        Log.e(tag,"Invalid direction in propigateRay().");
+                        break;
+                }
+                newRays.push(ray);
+                break;
+            case WORMHOLE:
+                break;
+            default:
+                break;
+        }
+        return newRays;
     }
 
-    private Ray propigateRay(Ray ray) {
-        //Ray newRay;
-
-
-        return new Ray(0,0, Ray.Type.GREEN, 0);
-        //return newRay;
-    }
 }

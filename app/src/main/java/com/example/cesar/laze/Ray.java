@@ -23,6 +23,12 @@ public class Ray extends Location {
         this.direction = direction;
     }
 
+    public Ray(Ray ray) {
+        super(ray.getX(), ray.getY());
+        this.type = ray.getType();
+        this.direction = ray.getDirection();
+    }
+
     public Type getType() {
         return type;
     }
