@@ -62,7 +62,8 @@ public class LazeGame {
 
     public void update() {
         ArrayList<Ray> currentRays = sources;
-        for (Ray ray : currentRays) {
+        for (int i = 0; i < currentRays.size(); ++i) {
+            Ray ray = currentRays.get(i);
             if (rayInPlay(ray) || !rayHitTarget(ray)) {
                 addRayToBlock(ray);
                 currentRays.add(propigateRay(ray));
@@ -72,6 +73,22 @@ public class LazeGame {
             }
         }
     }
+
+/*    public void update() {
+        ArrayList<Ray> currentRays = sources;
+        int i = 0;
+        while (i < currentRays.size()){
+            Ray ray = currentRays.get(i);
+            if (rayInPlay(ray) || !rayHitTarget(ray)) {
+                addRayToBlock(ray);
+                currentRays.add(propigateRay(ray));
+
+            } else {
+                // Ray is either about to go out of bounds or has hit a target
+            }
+        i++;
+        }
+    } */
 
     private boolean rayInPlay(Ray ray) {
         if ((ray.getX() == 0 && (ray.getDirection() == 225 || ray.getDirection() == 315)) ||
@@ -127,7 +144,7 @@ public class LazeGame {
         //Ray newRay;
 
 
-        return ray;
+        return new Ray(0,0, Ray.Type.GREEN, 0);
         //return newRay;
     }
 }
