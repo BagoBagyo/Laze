@@ -73,6 +73,7 @@ public class LazeGame {
                 // Ray is either about to go out of bounds or has hit a target
             }
         }
+		Log.d(tag, "update: " + this.toString());
     }
 
     public boolean allTargetsHit() {
@@ -165,10 +166,12 @@ public class LazeGame {
 
         block = blockGrid[blockX][blockY];
         ArrayDeque tempRay = block.getRays();
-        tempRay.push(ray);
-        block.setRays(tempRay);
-        Log.d(tag, block.toString());
-
+        Log.d(tag, "block.getRays: " + block.toString());
+		tempRay.push(new Ray(ray));
+        block.setRays(tempRay.clone());
+        Log.d(tag, "block.setRay: " + block.toString());
+		Log.d(tag, "propigate: " + this.toString());
+		//blockGrid[blockX][blockY].setRays(tempRay);
         // generate exit Rays
         switch (block.getType()) {
             case BLACKHOLE:
@@ -241,7 +244,7 @@ public class LazeGame {
             default:
                 break;
         }
-        Log.v(tag, newRays.toString());
+        Log.d(tag, "newRays: " + newRays.toString());
         return newRays;
     }
 
