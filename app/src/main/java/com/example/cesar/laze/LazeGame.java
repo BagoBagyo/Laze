@@ -11,7 +11,7 @@ import static com.example.cesar.laze.Block.Type.OPEN;
  * LazeGame Model class
  */
 public class LazeGame {
-    final static String tag = "LAZE: LazeGame";
+    final static String tag = "LAZE";
 
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
@@ -167,7 +167,7 @@ public class LazeGame {
         ArrayDeque tempRay = block.getRays();
         tempRay.push(ray);
         block.setRays(tempRay);
-        Log.v(tag, block.toString());
+        Log.d(tag, block.toString());
 
         // generate exit Rays
         switch (block.getType()) {

@@ -10,7 +10,7 @@ import java.util.ArrayDeque;
 
 
 public class MainActivity extends ActionBarActivity {
-    final static String tag = "LAZE: LAZE_MAIN";
+    final static String tag = "LAZE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +26,12 @@ public class MainActivity extends ActionBarActivity {
         LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);
 
         myLazeGame.update();
-        Log.v(tag, myLazeGame.toString());
+        Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
-            Log.v(tag, "All targets were hit! You won!");
+            Log.d(tag, "myLazeGame: All targets were hit! You won!");
         }
 
-        Log.d(tag, "Finished onCreate");
+        Log.d(tag, "myLazeGame: Finished onCreate");
     }
 
 

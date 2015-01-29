@@ -14,7 +14,8 @@ import java.util.ArrayDeque;
  * rays : Array list of rays incident on the block.
  */
 public class Block extends Location {
-    enum Type {
+    final static String tag = "LAZE";
+	enum Type {
         OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
     }
 
@@ -36,7 +37,7 @@ public class Block extends Location {
     }
 
     public ArrayDeque<Ray> getRays() {
-        Log.v("LAZE: (in Block):", rays.toString());
+        Log.d(tag, "getRays: " + rays.toString());
         return rays;
     }
 
