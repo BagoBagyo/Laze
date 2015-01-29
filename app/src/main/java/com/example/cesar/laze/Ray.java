@@ -4,16 +4,17 @@ package com.example.cesar.laze;
  * Created by Cesar on 1/24/2015.
  * Ray class
  * Defines a ray object (block incident ray)
- *
+ * <p/>
  * location : location on playfield grid.
  * type : kind of laser ray (red, green, etc).
  * direction : compass direction ray is emitting (45, 135, 225, 315).
-*/
+ */
 
 public class Ray extends Location {
     enum Type {
         RED, GREEN
     }
+
     private Type type;
     private int direction;
 

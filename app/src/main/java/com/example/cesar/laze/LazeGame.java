@@ -4,7 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayDeque;
 
-import static com.example.cesar.laze.Block.Type.*;
+import static com.example.cesar.laze.Block.Type.OPEN;
 
 /**
  * Created by Cesar on 1/26/2015.
@@ -15,12 +15,12 @@ public class LazeGame {
 
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
-    private ArrayDeque<Location> targets;
+    private ArrayDeque<Target> targets;
     private ArrayDeque<Ray> newRays;
     private int playfieldWidth;
     private int playfieldHeight;
 
-    public LazeGame(int blockGridWidth, int blockGridHeight, ArrayDeque<Ray> sources, ArrayDeque<Location> targets) {
+    public LazeGame(int blockGridWidth, int blockGridHeight, ArrayDeque<Ray> sources, ArrayDeque<Target> targets) {
         playfieldWidth = blockGridWidth * 2;
         playfieldHeight = blockGridHeight * 2;
 
@@ -28,11 +28,7 @@ public class LazeGame {
 
         for (int i = 0; i < blockGridWidth; i++) {
             for (int j = 0; j < blockGridHeight; j++) {
-                //ArrayDeque<Ray> nullRay = new ArrayDeque();
-                //nullRay.add(new Ray(0, 0, Ray.Type.RED, 0));
-
-                blockGrid[i][j] = new Block(i*2+1, j*2+1, OPEN, new ArrayDeque<Ray>());
-
+                blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, OPEN, new ArrayDeque<Ray>());
             }
         }
         this.sources = sources;
@@ -55,11 +51,11 @@ public class LazeGame {
         this.sources = sources;
     }
 
-    public ArrayDeque<Location> getTargets() {
+    public ArrayDeque<Target> getTargets() {
         return targets;
     }
 
-    public void setTargets(ArrayDeque<Location> targets) {
+    public void setTargets(ArrayDeque<Target> targets) {
         this.targets = targets;
     }
 
@@ -79,6 +75,17 @@ public class LazeGame {
         }
     }
 
+    public boolean allTargetsHit() {
+        boolean allTargetsHit = true;
+
+        for (Target target : targets) {
+            if (!target.isHit()) {
+                allTargetsHit = false;
+            }
+        }
+        return allTargetsHit;
+    }
+
     private boolean rayInPlay(Ray ray) {
         if ((ray.getX() == 0 && (ray.getDirection() == 225 || ray.getDirection() == 315)) ||
                 (ray.getY() == 0 && (ray.getDirection() == 315 || ray.getDirection() == 45)) ||
@@ -95,8 +102,9 @@ public class LazeGame {
     }
 
     private boolean rayHitTarget(Ray ray) {
-        for (Location targetLocation : targets) {
-            if ((ray.getX() == targetLocation.getX()) && (ray.getY() == targetLocation.getY())) {
+        for (Target target : targets) {
+            if ((ray.getX() == target.getX()) && (ray.getY() == target.getY())) {
+                target.setHit(true);
                 return true;
             }
         }
@@ -115,7 +123,7 @@ public class LazeGame {
             case 45:
                 if (rayX % 2 == 0) {
                     blockX = ++rayX;
-                    blockY= rayY;
+                    blockY = rayY;
                 } else {
                     blockX = rayX;
                     blockY = --rayY;
@@ -142,18 +150,18 @@ public class LazeGame {
             case 315:
                 if (rayX % 2 == 0) {
                     blockX = --rayX;
-                    blockY= rayY;
+                    blockY = rayY;
                 } else {
                     blockX = rayX;
                     blockY = --rayY;
                 }
                 break;
             default:
-                Log.e(tag, "Invalid Direction in propigateRay()");
+                Log.e(tag, "Invalid Direction in propigateRay()1");
                 break;
         }
-        blockX = blockX/2;
-        blockY = blockY/2;
+        blockX = blockX / 2;
+        blockY = blockY / 2;
 
         block = blockGrid[blockX][blockY];
         block.getRays().push(ray);
@@ -167,24 +175,60 @@ public class LazeGame {
             case GLASS:
                 break;
             case MIRROR:
+                switch (ray.getDirection()) {
+                    case 45:
+                        if (rayX % 2 == 0) {
+                            ray.setDirection(315);
+                        } else {
+                            ray.setDirection(135);
+                        }
+                        break;
+                    case 135:
+                        if (rayX % 2 == 0) {
+                            ray.setDirection(225);
+                        } else {
+                            ray.setDirection(45);
+                        }
+                        break;
+                    case 225:
+                        if (rayX % 2 == 0) {
+                            ray.setDirection(135);
+                        } else {
+                            ray.setDirection(335);
+                        }
+                        break;
+                    case 315:
+                        if (rayX % 2 == 0) {
+                            ray.setDirection(45);
+                        } else {
+                            ray.setDirection(225);
+                        }
+                        break;
+                    default:
+                        Log.e(tag, "Invalid Direction in propigateRay()2");
+                        break;
+                }
                 break;
             case OPEN:
                 switch (ray.getDirection()) {
                     case 45:
-                        ray.setY(ray.getY()-1);
+                        ray.setX(ray.getX() + 1);
+                        ray.setY(ray.getY() - 1);
                         break;
                     case 135:
-                        ray.setY(ray.getY()+1);
+                        ray.setX(ray.getX() + 1);
+                        ray.setY(ray.getY() + 1);
                         break;
                     case 225:
-                        ray.setX(ray.getX()-1);
-                        ray.setY(ray.getY()+1);
+                        ray.setX(ray.getX() - 1);
+                        ray.setY(ray.getY() + 1);
                         break;
                     case 315:
-                        ray.setX(ray.getX()+1);
+                        ray.setX(ray.getX() - 1);
+                        ray.setY(ray.getY() - 1);
                         break;
                     default:
-                        Log.e(tag,"Invalid direction in propigateRay().");
+                        Log.e(tag, "Invalid direction in propigateRay().3");
                         break;
                 }
                 newRays.push(ray);

@@ -6,7 +6,7 @@ import java.util.ArrayDeque;
  * Created by Cesar on 1/24/2015.
  * Block class
  * Defines a Block object on the playfield.
- *
+ * <p/>
  * location : location on playfield grid.
  * type : kind of block  (open, mirror, glass, etc).
  * rays : Array list of rays incident on the block.

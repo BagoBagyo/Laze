@@ -20,12 +20,15 @@ public class MainActivity extends ActionBarActivity {
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(4, 1, Ray.Type.RED, 225));
 
-        ArrayDeque<Location> myTargets = new ArrayDeque<>();
-        myTargets.add(new Location(1, 4));
+        ArrayDeque<Target> myTargets = new ArrayDeque<>();
+        myTargets.add(new Target(1, 4, false));
 
         LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);
 
         myLazeGame.update();
+        if (myLazeGame.allTargetsHit()) {
+            Log.v(tag, "All targets were hit! You won!");
+        }
 
         Log.d(tag, "Finished onCreate");
     }
