@@ -45,5 +45,15 @@ public class Ray extends Location {
     public void setDirection(int direction) {
         this.direction = direction;
     }
+
+    @Override
+    public String toString() {
+        return "Ray{" +
+                "x=" + this.getX()+
+                "y=" + this.getY() +
+                "type=" + type +
+                "direction=" + direction +
+                '}';
+    }
 }
 

@@ -60,7 +60,7 @@ public class LazeGame {
     }
 
     public void update() {
-        ArrayDeque<Ray> currentRays = sources;
+        ArrayDeque<Ray> currentRays = sources.clone();
         while (currentRays.isEmpty() == false) {
             Ray ray = currentRays.pop();
             if (rayInPlay(ray) || !rayHitTarget(ray)) {
@@ -164,7 +164,10 @@ public class LazeGame {
         blockY = blockY / 2;
 
         block = blockGrid[blockX][blockY];
-        block.getRays().push(ray);
+        ArrayDeque tempRay = block.getRays();
+        tempRay.push(ray);
+        block.setRays(tempRay);
+        Log.v(tag, block.toString());
 
         // generate exit Rays
         switch (block.getType()) {
@@ -238,7 +241,24 @@ public class LazeGame {
             default:
                 break;
         }
+        Log.v(tag, newRays.toString());
         return newRays;
     }
 
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        String NEW_LINE = System.getProperty("line.separator");
+
+        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
+
+        for (int i = 0; i < playfieldWidth / 2; i++) {
+            for (int j = 0; j < playfieldHeight / 2; j++) {
+                result.append(" block[" + i + "][" + j + "]: " + blockGrid[i][j].toString() + NEW_LINE);
+            }
+        }
+
+        result.append(" Sources: " + sources + NEW_LINE);
+        result.append(" Targets: " + targets + NEW_LINE);
+        return result.toString();
+    }
 }

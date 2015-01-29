@@ -1,5 +1,7 @@
 package com.example.cesar.laze;
 
+import android.util.Log;
+
 import java.util.ArrayDeque;
 
 /**
@@ -34,10 +36,21 @@ public class Block extends Location {
     }
 
     public ArrayDeque<Ray> getRays() {
+        Log.v("LAZE: (in Block):", rays.toString());
         return rays;
     }
 
     public void setRays(ArrayDeque<Ray> rays) {
         this.rays = rays;
+    }
+
+    @Override
+    public String toString() {
+        return "Block{" +
+                "x=" + this.getX()+
+                "y=" + this.getY() +
+                "type=" + type +
+                "rays=" + rays +
+                '}';
     }
 }

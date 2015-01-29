@@ -18,4 +18,24 @@ public class Target extends Location {
     public void setHit(boolean hit) {
         this.hit = hit;
     }
+
+/*    @Override
+    public String toString() {
+        super.toString();
+        StringBuilder result = new StringBuilder();
+        String NEW_LINE = System.getProperty("line.separator");
+
+        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
+        result.append(" hit: " + this.hit + NEW_LINE);
+        return result.toString();
+    }*/
+
+    @Override
+    public String toString() {
+        return "Target{" +
+                "x=" + this.getX()+
+                "y=" + this.getY() +
+                "hit=" + hit +
+                '}';
+    }
 }

@@ -26,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
         LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);
 
         myLazeGame.update();
+        Log.v(tag, myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
             Log.v(tag, "All targets were hit! You won!");
         }
