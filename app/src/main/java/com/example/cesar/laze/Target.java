@@ -11,6 +11,10 @@ public class Target extends Location {
         this.hit = hit;
     }
 
+    public Target(Target toClone) {
+        super(toClone);
+        hit = toClone.isHit();
+    }
     public boolean isHit() {
         return hit;
     }
@@ -29,11 +33,6 @@ public class Target extends Location {
         result.append(" hit: " + this.hit + NEW_LINE);
         return result.toString();
     }*/
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Target(getX(), getY(), hit);
-    }
 
     @Override
     public String toString() {

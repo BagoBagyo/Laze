@@ -1,7 +1,5 @@
 package com.example.cesar.laze;
 
-import android.util.Log;
-
 import java.util.ArrayDeque;
 
 /**
@@ -28,6 +26,13 @@ public class Block extends Location {
         this.rays = rays;
     }
 
+    public Block(Block toClone) {
+        super(toClone);
+        type = toClone.getType();
+        ArrayDeque<Ray> raysClone = new ArrayDeque<>();
+        for (Ray ray : toClone.getRays()) raysClone.push(new Ray(ray));
+    }
+
     public Type getType() {
         return type;
     }
@@ -37,20 +42,11 @@ public class Block extends Location {
     }
 
     public ArrayDeque<Ray> getRays() {
-        Log.d(tag, "getRays: " + rays.toString());
         return rays;
     }
 
     public void setRays(ArrayDeque<Ray> rays) {
         this.rays = rays;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        ArrayDeque<Ray> raysClone = new ArrayDeque<>();
-        for (Ray ray : rays) raysClone.push(new Ray(ray));
-
-        return new Block(getX(), getY(), type, raysClone);
     }
 
     @Override

@@ -25,9 +25,9 @@ public class Ray extends Location {
     }
 
     public Ray(Ray ray) {
-        super(ray.getX(), ray.getY());
-        this.type = ray.getType();
-        this.direction = ray.getDirection();
+        super(ray);
+        type = ray.type;
+        direction = ray.direction;
     }
 
     public Type getType() {
@@ -44,11 +44,6 @@ public class Ray extends Location {
 
     public void setDirection(int direction) {
         this.direction = direction;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Ray(getX(), getY(), type, direction);
     }
 
     @Override

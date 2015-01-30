@@ -62,13 +62,13 @@ public class LazeGame {
     public void update() {
         ArrayDeque<Ray> currentRays = new ArrayDeque<>();
         for (Ray ray : sources) currentRays.push(new Ray(ray));
-        while (currentRays.isEmpty() == false) {
-            Log.d(tag, "update: sources:" + sources.toString());
+        while (!currentRays.isEmpty()) {
             Ray ray = currentRays.pop();
             if (rayInPlay(ray) && !rayHitTarget(ray)) {
-                newRays = propigateRay(ray);
+                newRays = propagateRay(ray);
                 for (Ray newRay : newRays) {
-                    currentRays.push(new Ray(newRay));
+                    //currentRays.push(new Ray(newRay));
+                    currentRays.push(newRay);
                 }
             } else {
                 // Ray is either about to go out of bounds or has hit a target
@@ -112,15 +112,16 @@ public class LazeGame {
         return false;
     }
 
-    private ArrayDeque propigateRay(Ray ray) {
-        int rayX = ray.getX();
-        int rayY = ray.getY();
+    private ArrayDeque propagateRay(Ray ray) {
+        Ray rayCopy = new Ray(ray);
+        int rayX = rayCopy.getX();
+        int rayY = rayCopy.getY();
         int blockX = -1;
         int blockY = -1;
         Block block;
         ArrayDeque newRays = new ArrayDeque();
 
-        switch (ray.getDirection()) {
+        switch (rayCopy.getDirection()) {
             case 45:
                 if (rayX % 2 == 0) {
                     blockX = ++rayX;
@@ -158,24 +159,18 @@ public class LazeGame {
                 }
                 break;
             default:
-                Log.e(tag, "Invalid Direction in propigateRay()1");
+                Log.e(tag, "Invalid Direction in propigate Ray()1");
                 break;
         }
         blockX = blockX / 2;
         blockY = blockY / 2;
 
         block = blockGrid[blockX][blockY];
-        ArrayDeque tempRay = block.getRays();
-		try {
-            //tempRay.push(ray.clone());//new Ray(ray));
-            tempRay.push(new Ray(ray));
-        } catch (Exception e) {
-            Log.e(tag, "CloneNotSupportedException!");
-        }
-        block.setRays(tempRay);
-        Log.d(tag, "block.setRay: " + block.toString());
-		Log.d(tag, "propigate: " + this.toString());
-		//blockGrid[blockX][blockY].setRays(tempRay);
+        block.getRays().push(rayCopy);
+
+        Log.d(tag, "propagateRay: " + block.toString());
+		Log.d(tag, "propagate: " + this.toString());
+
         // generate exit Rays
         switch (block.getType()) {
             case BLACKHOLE:
@@ -185,63 +180,64 @@ public class LazeGame {
             case GLASS:
                 break;
             case MIRROR:
-                switch (ray.getDirection()) {
+                switch (rayCopy.getDirection()) {
                     case 45:
                         if (rayX % 2 == 0) {
-                            ray.setDirection(315);
+                            rayCopy.setDirection(315);
                         } else {
-                            ray.setDirection(135);
+                            rayCopy.setDirection(135);
                         }
                         break;
                     case 135:
                         if (rayX % 2 == 0) {
-                            ray.setDirection(225);
+                            rayCopy.setDirection(225);
                         } else {
-                            ray.setDirection(45);
+                            rayCopy.setDirection(45);
                         }
                         break;
                     case 225:
                         if (rayX % 2 == 0) {
-                            ray.setDirection(135);
+                            rayCopy.setDirection(135);
                         } else {
-                            ray.setDirection(335);
+                            rayCopy.setDirection(335);
                         }
                         break;
                     case 315:
                         if (rayX % 2 == 0) {
-                            ray.setDirection(45);
+                            rayCopy.setDirection(45);
                         } else {
-                            ray.setDirection(225);
+                            rayCopy.setDirection(225);
                         }
                         break;
                     default:
-                        Log.e(tag, "Invalid Direction in propigateRay()2");
+                        Log.e(tag, "Invalid Direction in propagateRay()2");
                         break;
                 }
                 break;
             case OPEN:
-                switch (ray.getDirection()) {
+                switch (rayCopy.getDirection()) {
                     case 45:
-                        ray.setX(ray.getX() + 1);
-                        ray.setY(ray.getY() - 1);
+                        rayCopy.setX(rayCopy.getX() + 1);
+                        rayCopy.setY(rayCopy.getY() - 1);
                         break;
                     case 135:
-                        ray.setX(ray.getX() + 1);
-                        ray.setY(ray.getY() + 1);
+                        rayCopy.setX(rayCopy.getX() + 1);
+                        rayCopy.setY(rayCopy.getY() + 1);
                         break;
                     case 225:
-                        ray.setX(ray.getX() - 1);
-                        ray.setY(ray.getY() + 1);
+                        rayCopy.setX(rayCopy.getX() - 1);
+                        rayCopy.setY(rayCopy.getY() + 1);
                         break;
                     case 315:
-                        ray.setX(ray.getX() - 1);
-                        ray.setY(ray.getY() - 1);
+                        rayCopy.setX(rayCopy.getX() - 1);
+                        rayCopy.setY(rayCopy.getY() - 1);
                         break;
                     default:
-                        Log.e(tag, "Invalid direction in propigateRay().3");
+                        Log.e(tag, "Invalid direction in propagateRay().3");
                         break;
                 }
-                newRays.push(new Ray(ray));
+                //newRays.push(new Ray(ray));
+                newRays.push(rayCopy);
                 break;
             case WORMHOLE:
                 break;

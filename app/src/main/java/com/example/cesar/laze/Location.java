@@ -13,26 +13,20 @@ public class Location {
         return x;
     }
 
-    /**
-     * @param x X position on playfield grid.
-     * @param y Y position on playfield grid.
-     */
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    /**
-     * @param x X position on playfield grid.
-     * @param y Y position on playfield grid.
-     */
+    public Location (Location toClone) {
+        x = toClone.x;
+        y = toClone.y;
+    }
+
     public void setX(int x) {
         this.x = x;
     }
 
-    /**
-     * @return int Y position on playfield grid.
-     */
     public int getY() {
         return y;
     }
@@ -44,11 +38,6 @@ public class Location {
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return new Location(x, y);
     }
 
     @Override
