@@ -47,6 +47,11 @@ public class Ray extends Location {
     }
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new Ray(getX(), getY(), type, direction);
+    }
+
+    @Override
     public String toString() {
         return "Ray{" +
                 "x=" + this.getX()+

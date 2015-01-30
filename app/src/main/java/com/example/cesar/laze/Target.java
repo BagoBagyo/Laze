@@ -31,6 +31,11 @@ public class Target extends Location {
     }*/
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new Target(getX(), getY(), hit);
+    }
+
+    @Override
     public String toString() {
         return "Target{" +
                 "x=" + this.getX()+

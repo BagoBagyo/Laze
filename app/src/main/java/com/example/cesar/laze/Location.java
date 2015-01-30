@@ -47,6 +47,11 @@ public class Location {
     }
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new Location(x, y);
+    }
+
+    @Override
     public String toString() {
         return "Location{" +
                 "x=" + x +

@@ -46,6 +46,14 @@ public class Block extends Location {
     }
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        ArrayDeque<Ray> raysClone = new ArrayDeque<>();
+        for (Ray ray : rays) raysClone.push(new Ray(ray));
+
+        return new Block(getX(), getY(), type, raysClone);
+    }
+
+    @Override
     public String toString() {
         return "Block{" +
                 "x=" + this.getX()+
