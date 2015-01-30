@@ -21,9 +21,9 @@ public class MainActivity extends ActionBarActivity {
         mySources.add(new Ray(4, 1, Ray.Type.RED, 225));
 
         ArrayDeque<Target> myTargets = new ArrayDeque<>();
-        myTargets.add(new Target(1, 4, false));
+        myTargets.add(new Target(1, 0, false));
 
-        LazeGame myLazeGame = new LazeGame(2, 2, mySources, myTargets);
+        LazeGame myLazeGame = new LazeGame(6, 6, mySources, myTargets);
 
         myLazeGame.update();
         Log.d(tag, "myLazeGame: " + myLazeGame.toString());

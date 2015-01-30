@@ -60,21 +60,20 @@ public class LazeGame {
     }
 
     public void update() {
-        ArrayDeque<Ray> currentRays = sources.clone();
+        ArrayDeque<Ray> currentRays = new ArrayDeque<>();
+        for (Ray ray : sources) currentRays.push(new Ray(ray));
         while (currentRays.isEmpty() == false) {
+            Log.d(tag, "update: sources:" + sources.toString());
             Ray ray = currentRays.pop();
-			Log.d(tag, "update: ray:" + ray.hashCode());
-            if (rayInPlay(ray) || !rayHitTarget(ray)) {
+            if (rayInPlay(ray) && !rayHitTarget(ray)) {
                 newRays = propigateRay(ray);
                 for (Ray newRay : newRays) {
-                    currentRays.push(newRay);
+                    currentRays.push(new Ray(newRay));
                 }
-
             } else {
                 // Ray is either about to go out of bounds or has hit a target
             }
         }
-		Log.d(tag, "update: " + this.toString());
     }
 
     public boolean allTargetsHit() {
@@ -167,8 +166,12 @@ public class LazeGame {
 
         block = blockGrid[blockX][blockY];
         ArrayDeque tempRay = block.getRays();
-        Log.d(tag, "block.getRays: " + block.toString());
-		tempRay.push(ray);//new Ray(ray));
+		try {
+            //tempRay.push(ray.clone());//new Ray(ray));
+            tempRay.push(new Ray(ray));
+        } catch (Exception e) {
+            Log.e(tag, "CloneNotSupportedException!");
+        }
         block.setRays(tempRay);
         Log.d(tag, "block.setRay: " + block.toString());
 		Log.d(tag, "propigate: " + this.toString());
@@ -238,7 +241,7 @@ public class LazeGame {
                         Log.e(tag, "Invalid direction in propigateRay().3");
                         break;
                 }
-                newRays.push(ray);
+                newRays.push(new Ray(ray));
                 break;
             case WORMHOLE:
                 break;
