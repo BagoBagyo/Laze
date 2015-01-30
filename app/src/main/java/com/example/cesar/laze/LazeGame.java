@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayDeque;
 
+import static com.example.cesar.laze.Block.Type.MIRROR;
 import static com.example.cesar.laze.Block.Type.OPEN;
 
 /**
@@ -31,6 +32,7 @@ public class LazeGame {
                 blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, OPEN, new ArrayDeque<Ray>());
             }
         }
+        blockGrid[1][1] = new Block(3, 3, MIRROR, new ArrayDeque<Ray>());
         this.sources = sources;
         this.targets = targets;
     }
@@ -64,7 +66,7 @@ public class LazeGame {
         for (Ray ray : sources) currentRays.push(new Ray(ray));
         while (!currentRays.isEmpty()) {
             Ray ray = currentRays.pop();
-            if (rayInPlay(ray) && !rayHitTarget(ray)) {
+            if (!rayHitTarget(ray) && rayInPlay(ray)) {
                 newRays = propagateRay(ray);
                 for (Ray newRay : newRays) {
                     //currentRays.push(new Ray(newRay));
@@ -121,6 +123,8 @@ public class LazeGame {
         Block block;
         ArrayDeque newRays = new ArrayDeque();
 
+        Log.d(tag, "propagateRay(): input ray: " + ray.toString());
+
         switch (rayCopy.getDirection()) {
             case 45:
                 if (rayX % 2 == 0) {
@@ -159,17 +163,16 @@ public class LazeGame {
                 }
                 break;
             default:
-                Log.e(tag, "Invalid Direction in propigate Ray()1");
+                Log.e(tag, "Invalid Direction in propagate Ray()1");
                 break;
         }
         blockX = blockX / 2;
         blockY = blockY / 2;
 
         block = blockGrid[blockX][blockY];
-        block.getRays().push(rayCopy);
+        block.getRays().push(new Ray(rayCopy));
 
-        Log.d(tag, "propagateRay: " + block.toString());
-		Log.d(tag, "propagate: " + this.toString());
+        Log.d(tag, "propagateRay(): ray assigned to block: " + block.toString());
 
         // generate exit Rays
         switch (block.getType()) {
@@ -187,6 +190,7 @@ public class LazeGame {
                         } else {
                             rayCopy.setDirection(135);
                         }
+                        newRays.push(rayCopy);
                         break;
                     case 135:
                         if (rayX % 2 == 0) {
@@ -194,13 +198,15 @@ public class LazeGame {
                         } else {
                             rayCopy.setDirection(45);
                         }
+                        newRays.push(rayCopy);
                         break;
                     case 225:
                         if (rayX % 2 == 0) {
                             rayCopy.setDirection(135);
                         } else {
-                            rayCopy.setDirection(335);
+                            rayCopy.setDirection(315);
                         }
+                        newRays.push(rayCopy);
                         break;
                     case 315:
                         if (rayX % 2 == 0) {
@@ -208,6 +214,7 @@ public class LazeGame {
                         } else {
                             rayCopy.setDirection(225);
                         }
+                        newRays.push(rayCopy);
                         break;
                     default:
                         Log.e(tag, "Invalid Direction in propagateRay()2");
@@ -219,32 +226,34 @@ public class LazeGame {
                     case 45:
                         rayCopy.setX(rayCopy.getX() + 1);
                         rayCopy.setY(rayCopy.getY() - 1);
+                        newRays.push(rayCopy);
                         break;
                     case 135:
                         rayCopy.setX(rayCopy.getX() + 1);
                         rayCopy.setY(rayCopy.getY() + 1);
+                        newRays.push(rayCopy);
                         break;
                     case 225:
                         rayCopy.setX(rayCopy.getX() - 1);
                         rayCopy.setY(rayCopy.getY() + 1);
+                        newRays.push(rayCopy);
                         break;
                     case 315:
                         rayCopy.setX(rayCopy.getX() - 1);
                         rayCopy.setY(rayCopy.getY() - 1);
+                        newRays.push(rayCopy);
                         break;
                     default:
                         Log.e(tag, "Invalid direction in propagateRay().3");
                         break;
                 }
-                //newRays.push(new Ray(ray));
-                newRays.push(rayCopy);
                 break;
             case WORMHOLE:
                 break;
             default:
                 break;
         }
-        Log.d(tag, "newRays: " + newRays.toString());
+        Log.d(tag, "propagateRay: newRays: " + newRays.toString());
         return newRays;
     }
 
