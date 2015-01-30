@@ -23,15 +23,21 @@ public class MainActivity extends ActionBarActivity {
         ArrayDeque<Target> myTargets = new ArrayDeque<>();
         myTargets.add(new Target(1, 0, false));
 
+        Log.d(tag, "onCreate(): mySources: " + mySources);
+        Log.d(tag, "onCreate(): myTargets: " + myTargets);
+
         LazeGame myLazeGame = new LazeGame(6, 6, mySources, myTargets);
 
         myLazeGame.update();
-        Log.d(tag, "myLazeGame: " + myLazeGame.toString());
+        //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
-            Log.d(tag, "myLazeGame: All targets were hit! You won!");
+            Log.d(tag, "onCreate(): All targets were hit! You won! myTargets: " + myTargets);
+        } else {
+            Log.d(tag, "onCreate(): All targets were not hit! myTargets: " + myTargets);
+
         }
 
-        Log.d(tag, "myLazeGame: Finished onCreate");
+        Log.d(tag, "onCreate(): Finished onCreate");
     }
 
 

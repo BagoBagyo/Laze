@@ -4,9 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayDeque;
 
-import static com.example.cesar.laze.Block.Type.MIRROR;
-import static com.example.cesar.laze.Block.Type.OPEN;
-
 /**
  * Created by Cesar on 1/26/2015.
  * LazeGame Model class
@@ -17,6 +14,7 @@ public class LazeGame {
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
+    private ArrayDeque<Ray> outOfPlay = new ArrayDeque<>();
     private ArrayDeque<Ray> newRays;
     private int playfieldWidth;
     private int playfieldHeight;
@@ -29,10 +27,10 @@ public class LazeGame {
 
         for (int i = 0; i < blockGridWidth; i++) {
             for (int j = 0; j < blockGridHeight; j++) {
-                blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, OPEN, new ArrayDeque<Ray>());
+                blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, Block.Type.OPEN, new ArrayDeque<Ray>());
             }
         }
-        blockGrid[1][1] = new Block(3, 3, MIRROR, new ArrayDeque<Ray>());
+        blockGrid[1][1] = new Block(3, 3, Block.Type.MIRROR, new ArrayDeque<Ray>());
         this.sources = sources;
         this.targets = targets;
     }
@@ -76,6 +74,7 @@ public class LazeGame {
                 // Ray is either about to go out of bounds or has hit a target
             }
         }
+        Log.d(tag, "propagateRay(): OutOfPlay: " + outOfPlay);
     }
 
     public boolean allTargetsHit() {
@@ -98,6 +97,8 @@ public class LazeGame {
                 (ray.getX() == 0 && ray.getY() == playfieldHeight && ray.getDirection() != 45) ||
                 (ray.getX() == playfieldWidth && ray.getY() == 0 && ray.getDirection() != 225) ||
                 (ray.getX() == playfieldWidth && ray.getY() == playfieldHeight && ray.getDirection() != 315)) {
+            outOfPlay.push(new Ray(ray));
+            //Log.d(tag, "rayInPlay(): ray out of play" + outOfPlay.toString());
             return false;
         } else {
             return true;
@@ -106,11 +107,15 @@ public class LazeGame {
 
     private boolean rayHitTarget(Ray ray) {
         for (Target target : targets) {
+            //Log.d(tag, "rayHitTarget(): in ray: " + ray.toString());
+            //Log.d(tag, "rayHitTarget(): target: " + target.toString());
             if ((ray.getX() == target.getX()) && (ray.getY() == target.getY())) {
                 target.setHit(true);
+                //Log.d(tag, "rayHitTarget(): target hit: " + target.toString());
                 return true;
             }
         }
+        //Log.d(tag, "rayHitTarget(): no targets hit.");
         return false;
     }
 
@@ -253,7 +258,7 @@ public class LazeGame {
             default:
                 break;
         }
-        Log.d(tag, "propagateRay: newRays: " + newRays.toString());
+        Log.d(tag, "propagateRay(): newRays: " + newRays.toString());
         return newRays;
     }
 
@@ -269,8 +274,6 @@ public class LazeGame {
             }
         }
 
-        result.append(" Sources: " + sources + NEW_LINE);
-        result.append(" Targets: " + targets + NEW_LINE);
         return result.toString();
     }
 }
