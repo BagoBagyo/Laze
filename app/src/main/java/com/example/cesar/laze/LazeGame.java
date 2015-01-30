@@ -63,6 +63,7 @@ public class LazeGame {
         ArrayDeque<Ray> currentRays = sources.clone();
         while (currentRays.isEmpty() == false) {
             Ray ray = currentRays.pop();
+			Log.d(tag, "update: ray:" + ray.hashCode());
             if (rayInPlay(ray) || !rayHitTarget(ray)) {
                 newRays = propigateRay(ray);
                 for (Ray newRay : newRays) {
@@ -167,8 +168,8 @@ public class LazeGame {
         block = blockGrid[blockX][blockY];
         ArrayDeque tempRay = block.getRays();
         Log.d(tag, "block.getRays: " + block.toString());
-		tempRay.push(new Ray(ray));
-        block.setRays(tempRay.clone());
+		tempRay.push(ray);//new Ray(ray));
+        block.setRays(tempRay);
         Log.d(tag, "block.setRay: " + block.toString());
 		Log.d(tag, "propigate: " + this.toString());
 		//blockGrid[blockX][blockY].setRays(tempRay);
