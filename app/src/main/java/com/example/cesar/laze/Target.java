@@ -15,6 +15,7 @@ public class Target extends Location {
         super(toClone);
         hit = toClone.isHit();
     }
+
     public boolean isHit() {
         return hit;
     }
@@ -37,7 +38,7 @@ public class Target extends Location {
     @Override
     public String toString() {
         return "Target{" +
-                "x=" + this.getX()+
+                "x=" + this.getX() +
                 "y=" + this.getY() +
                 "hit=" + hit +
                 '}';

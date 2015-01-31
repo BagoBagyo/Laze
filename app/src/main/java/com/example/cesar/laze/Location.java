@@ -18,7 +18,7 @@ public class Location {
         this.y = y;
     }
 
-    public Location (Location toClone) {
+    public Location(Location toClone) {
         x = toClone.x;
         y = toClone.y;
     }

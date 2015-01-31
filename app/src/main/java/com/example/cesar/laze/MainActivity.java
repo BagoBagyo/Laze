@@ -18,10 +18,11 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
-        mySources.add(new Ray(4, 1, Ray.Type.RED, 225));
+        mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
 
         ArrayDeque<Target> myTargets = new ArrayDeque<>();
         myTargets.add(new Target(1, 0, false));
+        myTargets.add(new Target(8, 5, false));
 
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
@@ -31,9 +32,9 @@ public class MainActivity extends ActionBarActivity {
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
-            Log.d(tag, "onCreate(): All targets were hit! You won! myTargets: " + myTargets);
+            Log.d(tag, "onCreate(): You won! All targets were hit! myTargets: " + myTargets);
         } else {
-            Log.d(tag, "onCreate(): All targets were not hit! myTargets: " + myTargets);
+            Log.d(tag, "onCreate(): You lost! Not all targets were hit. myTargets: " + myTargets);
 
         }
 

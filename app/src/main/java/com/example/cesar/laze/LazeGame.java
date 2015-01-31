@@ -30,7 +30,8 @@ public class LazeGame {
                 blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, Block.Type.OPEN, new ArrayDeque<Ray>());
             }
         }
-        blockGrid[1][1] = new Block(3, 3, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[3][3] = new Block(7, 7, Block.Type.MIRROR, new ArrayDeque<Ray>());
+
         this.sources = sources;
         this.targets = targets;
     }
@@ -64,7 +65,8 @@ public class LazeGame {
         for (Ray ray : sources) currentRays.push(new Ray(ray));
         while (!currentRays.isEmpty()) {
             Ray ray = currentRays.pop();
-            if (!rayHitTarget(ray) && rayInPlay(ray)) {
+            checkRayTargetHit(ray);
+            if (rayInPlay(ray)) {
                 newRays = propagateRay(ray);
                 for (Ray newRay : newRays) {
                     //currentRays.push(new Ray(newRay));
@@ -105,17 +107,17 @@ public class LazeGame {
         }
     }
 
-    private boolean rayHitTarget(Ray ray) {
+    private boolean checkRayTargetHit(Ray ray) {
         for (Target target : targets) {
-            //Log.d(tag, "rayHitTarget(): in ray: " + ray.toString());
-            //Log.d(tag, "rayHitTarget(): target: " + target.toString());
+            //Log.d(tag, "checkRayTargetHit(): in ray: " + ray.toString());
+            //Log.d(tag, "checkRayTargetHit(): target: " + target.toString());
             if ((ray.getX() == target.getX()) && (ray.getY() == target.getY())) {
                 target.setHit(true);
-                //Log.d(tag, "rayHitTarget(): target hit: " + target.toString());
+                //Log.d(tag, "checkRayTargetHit(): target hit: " + target.toString());
                 return true;
             }
         }
-        //Log.d(tag, "rayHitTarget(): no targets hit.");
+        //Log.d(tag, "checkRayTargetHit(): no targets hit.");
         return false;
     }
 
@@ -133,38 +135,38 @@ public class LazeGame {
         switch (rayCopy.getDirection()) {
             case 45:
                 if (rayX % 2 == 0) {
-                    blockX = ++rayX;
+                    blockX = rayX + 1;
                     blockY = rayY;
                 } else {
                     blockX = rayX;
-                    blockY = --rayY;
+                    blockY = rayY - 1;
                 }
                 break;
             case 135:
                 if (rayX % 2 == 0) {
-                    blockX = ++rayX;
+                    blockX = rayX + 1;
                     blockY = rayY;
                 } else {
                     blockX = rayX;
-                    blockY = ++rayY;
+                    blockY = rayY + 1;
                 }
                 break;
             case 225:
                 if (rayX % 2 == 0) {
-                    blockX = --rayX;
+                    blockX = rayX - 1;
                     blockY = rayY;
                 } else {
                     blockX = rayX;
-                    blockY = ++rayY;
+                    blockY = rayY + 1;
                 }
                 break;
             case 315:
                 if (rayX % 2 == 0) {
-                    blockX = --rayX;
+                    blockX = rayX - 1;
                     blockY = rayY;
                 } else {
                     blockX = rayX;
-                    blockY = --rayY;
+                    blockY = rayY - 1;
                 }
                 break;
             default:

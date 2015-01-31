@@ -49,7 +49,7 @@ public class Ray extends Location {
     @Override
     public String toString() {
         return "Ray{" +
-                "x=" + this.getX()+
+                "x=" + this.getX() +
                 "y=" + this.getY() +
                 "type=" + type +
                 "direction=" + direction +

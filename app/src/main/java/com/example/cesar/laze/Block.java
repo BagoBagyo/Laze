@@ -13,7 +13,8 @@ import java.util.ArrayDeque;
  */
 public class Block extends Location {
     final static String tag = "LAZE";
-	enum Type {
+
+    enum Type {
         OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
     }
 
@@ -52,7 +53,7 @@ public class Block extends Location {
     @Override
     public String toString() {
         return "Block{" +
-                "x=" + this.getX()+
+                "x=" + this.getX() +
                 "y=" + this.getY() +
                 "type=" + type +
                 "rays=" + rays +
