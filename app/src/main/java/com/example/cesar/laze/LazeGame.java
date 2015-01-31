@@ -177,6 +177,10 @@ public class LazeGame {
         blockY = blockY / 2;
 
         block = blockGrid[blockX][blockY];
+
+        // Need to add checkSameRayExists(rayCopy) and don't push or generate exit Ray.
+        // Instead just return newRays; which is empty.
+        // This prevents infinite lase beam loops.
         block.getRays().push(new Ray(rayCopy));
 
         Log.d(tag, "propagateRay(): ray assigned to block: " + block.toString());

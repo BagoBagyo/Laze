@@ -19,10 +19,12 @@ public class MainActivity extends ActionBarActivity {
 
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
+        mySources.add(new Ray(1, 4, Ray.Type.RED, 135));
 
         ArrayDeque<Target> myTargets = new ArrayDeque<>();
         myTargets.add(new Target(1, 0, false));
         myTargets.add(new Target(8, 5, false));
+        myTargets.add(new Target(7, 12, false));
 
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
