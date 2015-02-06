@@ -11,13 +11,8 @@ package com.example.cesar.laze;
  */
 
 public class Ray extends Location {
-    enum Type {
-        RED, GREEN
-    }
-
     private Type type;
     private int direction;
-
     public Ray(int x, int y, Type type, int direction) {
         super(x, y);
         this.type = type;
@@ -54,6 +49,10 @@ public class Ray extends Location {
                 "type=" + type +
                 "direction=" + direction +
                 '}';
+    }
+
+    enum Type {
+        RED, GREEN
     }
 }
 

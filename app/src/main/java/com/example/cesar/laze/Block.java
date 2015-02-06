@@ -13,25 +13,12 @@ import java.util.ArrayDeque;
  */
 public class Block extends Location {
     final static String tag = "LAZE";
-
-    enum Type {
-        OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
-    }
-
     private Type type;
     private ArrayDeque<Ray> rays;
-
     public Block(int x, int y, Type type, ArrayDeque<Ray> rays) {
         super(x, y);
         this.type = type;
         this.rays = rays;
-    }
-
-    public Block(Block toClone) {
-        super(toClone);
-        type = toClone.getType();
-        ArrayDeque<Ray> raysClone = new ArrayDeque<>();
-        for (Ray ray : toClone.getRays()) raysClone.push(new Ray(ray));
     }
 
     public Type getType() {
@@ -58,5 +45,9 @@ public class Block extends Location {
                 "type=" + type +
                 "rays=" + rays +
                 '}';
+    }
+
+    enum Type {
+        OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
     }
 }

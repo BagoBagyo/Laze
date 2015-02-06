@@ -9,10 +9,6 @@ public class Location {
     private int x;
     private int y;
 
-    public int getX() {
-        return x;
-    }
-
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
@@ -21,6 +17,10 @@ public class Location {
     public Location(Location toClone) {
         x = toClone.x;
         y = toClone.y;
+    }
+
+    public int getX() {
+        return x;
     }
 
     public void setX(int x) {

@@ -2,6 +2,7 @@ package com.example.cesar.laze;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,11 +12,15 @@ import java.util.ArrayDeque;
 
 public class MainActivity extends ActionBarActivity {
     final static String tag = "LAZE";
+    final static int blockGridWidth = 6;
+    final static int blockGridHeight = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        LazeView lazeView = new LazeView(this);
+        setContentView(lazeView);
 
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
@@ -29,8 +34,12 @@ public class MainActivity extends ActionBarActivity {
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
 
-        LazeGame myLazeGame = new LazeGame(6, 6, mySources, myTargets);
+        LazeGame myLazeGame = new LazeGame(blockGridWidth, blockGridHeight, mySources, myTargets);
+        DisplayMetrics d = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(d);
 
+        lazeView.setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
+        lazeView.invalidate();
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
@@ -39,6 +48,7 @@ public class MainActivity extends ActionBarActivity {
             Log.d(tag, "onCreate(): You lost! Not all targets were hit. myTargets: " + myTargets);
 
         }
+
 
         Log.d(tag, "onCreate(): Finished onCreate");
     }
