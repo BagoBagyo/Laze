@@ -9,5 +9,7 @@
         class="com.example.cesar.laze.LazeView"
         android:id="@+id/view"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_margin="-45dp"
+        android:clipChildren="false"/>
 </RelativeLayout>

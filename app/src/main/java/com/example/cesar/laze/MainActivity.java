@@ -44,10 +44,10 @@ public class MainActivity extends ActionBarActivity {
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
-            Toast.makeText(this,"YOU WON!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "YOU WON!", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You won! All targets were hit! myTargets: " + myTargets);
         } else {
-            Toast.makeText(this,"NOT ALL TARGETS WERE HIT.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "NOT ALL TARGETS WERE HIT.", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You lost! Not all targets were hit. myTargets: " + myTargets);
 
         }

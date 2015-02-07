@@ -45,6 +45,12 @@ public class LazeView extends View {
         super(context, attrs);
     }
 
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
     public void setLazeViewParams(Block[][] blockGrid, ArrayDeque<Ray> sources, ArrayDeque<Target> targets) {
         this.blockGrid = blockGrid;
         this.sources = sources;
@@ -98,42 +104,44 @@ public class LazeView extends View {
         }
         // Draw sources
         if (sources != null) {
-        for (Ray source : sources) {
-            switch (source.getType()) {
-                case RED:
-                    bmp = bmpSource;
-                    break;
-                case GREEN:
-                    bmp = bmpSource;
-                    break;
-                default:
-                    break;
+            for (Ray source : sources) {
+                switch (source.getType()) {
+                    case RED:
+                        bmp = bmpSource;
+                        break;
+                    case GREEN:
+                        bmp = bmpSource;
+                        break;
+                    default:
+                        break;
+                }
+                int scaledWidth = x / playfieldWidth;
+                int scaledHeight = y / playfieldHeight;
+                int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
+                int bmpX = source.getX() * shortScale;
+                int bmpY = source.getY() * shortScale;
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
+                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
+
+
             }
-            int scaledWidth = x / playfieldWidth;
-            int scaledHeight = y / playfieldHeight;
-            int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-            int bmpX = source.getX() * shortScale;
-            int bmpY = source.getY() * shortScale;
-            Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
-            canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
-
-
-        }}
+        }
 
         // Draw targets
         if (targets != null) {
-        bmp = bmpTarget;
-        for (Target target : targets) {
-            int scaledWidth = x / playfieldWidth;
-            int scaledHeight = y / playfieldHeight;
-            int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-            int bmpX = target.getX() * shortScale;
-            int bmpY = target.getY() * shortScale;
-            Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
-            canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
+            bmp = bmpTarget;
+            for (Target target : targets) {
+                int scaledWidth = x / playfieldWidth;
+                int scaledHeight = y / playfieldHeight;
+                int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
+                int bmpX = target.getX() * shortScale;
+                int bmpY = target.getY() * shortScale;
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
+                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
 
 
-        }}
+            }
+        }
         // Draw laser path
         for (int i = 0; i < playfieldWidth / 2; i++) {
             for (int j = 0; j < playfieldHeight / 2; j++) {
@@ -154,16 +162,16 @@ public class LazeView extends View {
                             int rayX = ray.getX();
                             switch (ray.getDirection()) {
                                 case 45:
-                                    rayDir = (rayX %2 ==0) ? 0 : 180;
+                                    rayDir = (rayX % 2 == 0) ? 0 : 180;
                                     break;
                                 case 135:
-                                    rayDir = (rayX %2 ==0) ? 270 : 90;
+                                    rayDir = (rayX % 2 == 0) ? 270 : 90;
                                     break;
                                 case 225:
-                                    rayDir = (rayX %2 ==0) ? 180 : 0;
+                                    rayDir = (rayX % 2 == 0) ? 180 : 0;
                                     break;
                                 case 315:
-                                    rayDir = (rayX %2 ==0) ? 90 : 270;
+                                    rayDir = (rayX % 2 == 0) ? 90 : 270;
                                     break;
                                 default:
                                     Log.e(tag, "Invalid Direction in onDraw() Draw laser path. (OPEN)");
@@ -175,7 +183,7 @@ public class LazeView extends View {
                             int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
                             int bmpX = block.getX() * shortScale;
                             int bmpY = block.getY() * shortScale;
-                            Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser,rayDir), shortScale * 2, shortScale * 2, true);
+                            Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), shortScale * 2, shortScale * 2, true);
                             canvas.drawBitmap(scaledBmp, bmpX - shortScale, bmpY - shortScale, paint);
 
                         }
@@ -190,13 +198,6 @@ public class LazeView extends View {
         }
         super.onDraw(canvas);
 
-    }
-
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
 }
