@@ -15,6 +15,7 @@ public class Block extends Location {
     final static String tag = "LAZE";
     private Type type;
     private ArrayDeque<Ray> rays;
+
     public Block(int x, int y, Type type, ArrayDeque<Ray> rays) {
         super(x, y);
         this.type = type;

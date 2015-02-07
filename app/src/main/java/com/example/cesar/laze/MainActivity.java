@@ -6,6 +6,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayDeque;
 
@@ -24,12 +25,12 @@ public class MainActivity extends ActionBarActivity {
 
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
-        mySources.add(new Ray(1, 4, Ray.Type.RED, 135));
+        mySources.add(new Ray(2, 1, Ray.Type.RED, 135));
 
         ArrayDeque<Target> myTargets = new ArrayDeque<>();
-        myTargets.add(new Target(1, 0, false));
+        myTargets.add(new Target(3, 12, false));
         myTargets.add(new Target(8, 5, false));
-        myTargets.add(new Target(7, 12, false));
+        myTargets.add(new Target(11, 10, false));
 
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
@@ -43,8 +44,10 @@ public class MainActivity extends ActionBarActivity {
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
+            Toast.makeText(this,"YOU WON!", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You won! All targets were hit! myTargets: " + myTargets);
         } else {
+            Toast.makeText(this,"NOT ALL TARGETS WERE HIT.", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You lost! Not all targets were hit. myTargets: " + myTargets);
 
         }

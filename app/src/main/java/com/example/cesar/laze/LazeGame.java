@@ -32,6 +32,7 @@ public class LazeGame {
         }
         blockGrid[0][0] = new Block(1, 1, Block.Type.MIRROR, new ArrayDeque<Ray>());
         blockGrid[5][5] = new Block(11, 11, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[0][5] = new Block(1, 11, Block.Type.MIRROR, new ArrayDeque<Ray>());
 
         this.sources = sources;
         this.targets = targets;
