@@ -8,7 +8,10 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayDeque;
 
@@ -200,4 +203,31 @@ public class LazeView extends View {
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        //ImageView imageView = (ImageView) findViewById(R.id.imageViewBmp);
+        //imageView.setImageBitmap(bmpMirror);
+        ImageView imageView = new ImageView(getContext());
+        imageView.setImageBitmap(bmpMirror);
+        //View.DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(imageView);
+        startDrag(null, new MyDragShadowBuilder(imageView), null, 0);
+        Log.e(tag, "onTouchEvent");
+        return true;
+    }
+
+
+
+    @Override
+    public boolean onDragEvent(DragEvent event) {
+final int action = event.getAction();
+        Log.e(tag, "onDragEvent:" + event.toString());
+        switch (action) {
+            case DragEvent.ACTION_DRAG_STARTED:
+                return true;
+
+        }
+        return false;
+    }
+
 }
+

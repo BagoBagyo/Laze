@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayDeque;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity{
     final static String tag = "LAZE";
     final static int blockGridWidth = 6;
     final static int blockGridHeight = 6;
@@ -78,4 +78,5 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
