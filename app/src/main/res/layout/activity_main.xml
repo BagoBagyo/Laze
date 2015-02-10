@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clipChildren="false"
     tools:context=".MainActivity">
 
@@ -8,16 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         class="com.example.cesar.laze.LazeView"
-        android:id="@+id/view"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="-45dp"
-        android:clipChildren="false"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageViewBmp"
-        android:visibility="visible" />
+        android:id="@+id/view" />
 
 </RelativeLayout>

@@ -11,17 +11,24 @@ import android.widget.Toast;
 import java.util.ArrayDeque;
 
 
-public class MainActivity extends ActionBarActivity{
+public class MainActivity extends ActionBarActivity {
     final static String tag = "LAZE";
     final static int blockGridWidth = 6;
     final static int blockGridHeight = 6;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
-        LazeView lazeView = new LazeView(this);
-        setContentView(lazeView);
+        //LazeView lazeView = new LazeView(this);
+        //lazeView.setVisibility(View.VISIBLE);
+        setContentView(R.layout.activity_main);
+
+        //LazeView lazeView = new LazeView(this);
+        //setContentView(lazeView);
+        //lazeView.invalidate();
+
 
         ArrayDeque<Ray> mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
@@ -36,11 +43,12 @@ public class MainActivity extends ActionBarActivity{
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
 
         LazeGame myLazeGame = new LazeGame(blockGridWidth, blockGridHeight, mySources, myTargets);
+
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
 
-        lazeView.setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
-        lazeView.invalidate();
+        //lazeView.setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
+        ((LazeView) this.findViewById(R.id.view)).setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {

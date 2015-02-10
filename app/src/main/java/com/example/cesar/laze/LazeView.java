@@ -20,14 +20,12 @@ import java.util.ArrayDeque;
  */
 public class LazeView extends View {
     final static String tag = "LAZE";
-
+    static ImageView myShadow;
     private int playfieldWidth;
     private int playfieldHeight;
-
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
-
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
     Bitmap bmp = bmpOpen;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
@@ -46,6 +44,7 @@ public class LazeView extends View {
 
     public LazeView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        AttributeSet myAttrs = attrs;
     }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
@@ -65,6 +64,7 @@ public class LazeView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.e(tag, "entering onDraw");
 
         int x = getWidth();
         int y = getHeight();
@@ -205,28 +205,29 @@ public class LazeView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //View myShadow = (View) findViewById(R.id.view);
         //ImageView imageView = (ImageView) findViewById(R.id.imageViewBmp);
         //imageView.setImageBitmap(bmpMirror);
-        ImageView imageView = new ImageView(getContext());
-        imageView.setImageBitmap(bmpMirror);
-        //View.DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(imageView);
-        startDrag(null, new MyDragShadowBuilder(imageView), null, 0);
+        //ImageView imageView = new ImageView(getContext());
+        //imageView.setImageBitmap(bmpMirror);
+        //DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(myShadow);
+        //startDrag(null, new LazeDragShadowBuilder(imageView), null, 0);
+        //View icon = findViewById(R.id.icon);
+        startDrag(null, new LazeDragShadowBuilder(this), null, 0);
         Log.e(tag, "onTouchEvent");
         return true;
     }
 
-
-
     @Override
     public boolean onDragEvent(DragEvent event) {
-final int action = event.getAction();
+        final int action = event.getAction();
         Log.e(tag, "onDragEvent:" + event.toString());
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
                 return true;
 
         }
-        return false;
+        return true;
     }
 
 }
