@@ -1,13 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clipChildren="false"
     tools:context=".MainActivity">
 
     <view
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/view"
         class="com.example.cesar.laze.LazeView"
-        android:id="@+id/view" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

@@ -11,9 +11,9 @@ import android.view.View;
  */
 public class LazeDragShadowBuilder extends View.DragShadowBuilder {
     final static String tag = "LAZE";
+    private static Bitmap shadow;
     // The drag shadow image, defined as a drawable thing
     View view;
-    private static Bitmap shadow;
 
     // Defines the constructor for myDragShadowBuilder
     public LazeDragShadowBuilder(View v) {
@@ -61,8 +61,8 @@ public class LazeDragShadowBuilder extends View.DragShadowBuilder {
         Log.e(tag, "entering onDrawShadow");
 
         // Draws the ColorDrawable in the Canvas passed in from the system.
-       //Paint paint = new Paint();
-        canvas.drawBitmap(((LazeView)getView()).bmpMirror, 0, 0, null);
+        //Paint paint = new Paint();
+        canvas.drawBitmap(((LazeView) getView()).bmpMirror, 0, 0, null);
         //lazeView.onDraw(canvas);
     }
 }

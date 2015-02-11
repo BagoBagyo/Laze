@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 public class LazeView extends View {
     final static String tag = "LAZE";
     static ImageView myShadow;
+    Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
     private int playfieldWidth;
     private int playfieldHeight;
     private int viewWidth;
@@ -41,7 +42,6 @@ public class LazeView extends View {
     //Bitmap bmpBlackhole = BitmapFactory.decodeResource(getResources(), R.drawable.blackhole);
     private Bitmap bmpSource = BitmapFactory.decodeResource(getResources(), R.drawable.source);
     private Bitmap bmpTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target);
-     Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
     private Bitmap bmpLaser = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
 
 
