@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.DragEvent;
@@ -23,18 +22,26 @@ public class LazeView extends View {
     static ImageView myShadow;
     private int playfieldWidth;
     private int playfieldHeight;
+    private int viewWidth;
+    private int viewHeight;
+    private int blockQuadLength;
+    private int columnWidth;
+    private int rowHeight;
+    private int getBlockQuadLength;
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
+    private int bmpX;
+    private int bmpY;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
-    Bitmap bmp = bmpOpen;
+    private Bitmap bmp = bmpOpen;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
     //Bitmap bmpWormhole = BitmapFactory.decodeResource(getResources(), R.drawable.wormhole);
     //Bitmap bmpBlackhole = BitmapFactory.decodeResource(getResources(), R.drawable.blackhole);
     private Bitmap bmpSource = BitmapFactory.decodeResource(getResources(), R.drawable.source);
     private Bitmap bmpTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target);
-    private Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
+     Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
     private Bitmap bmpLaser = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
 
 
@@ -53,23 +60,24 @@ public class LazeView extends View {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    public void setLazeViewParams(Block[][] blockGrid, ArrayDeque<Ray> sources, ArrayDeque<Target> targets) {
+    public void initLazeView(Block[][] blockGrid, ArrayDeque<Ray> sources, ArrayDeque<Target> targets) {
         this.blockGrid = blockGrid;
         this.sources = sources;
         this.targets = targets;
-
-        playfieldWidth = blockGrid.length * 2;
-        playfieldHeight = blockGrid[0].length * 2;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         Log.e(tag, "entering onDraw");
 
-        int x = getWidth();
-        int y = getHeight();
+        viewWidth = getWidth();
+        viewHeight = getHeight();
 
-        Paint paint = new Paint();
+        playfieldWidth = blockGrid.length * 2;
+        playfieldHeight = blockGrid[0].length * 2;
+        columnWidth = viewWidth / playfieldWidth;
+        rowHeight = viewHeight / playfieldHeight;
+        blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
 
         for (int i = 0; i < playfieldWidth / 2; i++) {
             for (int j = 0; j < playfieldHeight / 2; j++) {
@@ -94,15 +102,11 @@ public class LazeView extends View {
                         break;
                 }
 
-                int scaledWidth = x / playfieldWidth;
-                int scaledHeight = y / playfieldHeight;
-                int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-                int bmpX = block.getX() * shortScale;
-                int bmpY = block.getY() * shortScale;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - shortScale, bmpY - shortScale, paint);
 
-
+                int blockX = block.getX() * blockQuadLength;
+                int blockY = block.getY() * blockQuadLength;
+                Bitmap blockBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                canvas.drawBitmap(blockBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
             }
         }
         // Draw sources
@@ -118,15 +122,10 @@ public class LazeView extends View {
                     default:
                         break;
                 }
-                int scaledWidth = x / playfieldWidth;
-                int scaledHeight = y / playfieldHeight;
-                int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-                int bmpX = source.getX() * shortScale;
-                int bmpY = source.getY() * shortScale;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
-
-
+                bmpX = source.getX() * blockQuadLength;
+                bmpY = source.getY() * blockQuadLength;
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), null);
             }
         }
 
@@ -134,17 +133,13 @@ public class LazeView extends View {
         if (targets != null) {
             bmp = bmpTarget;
             for (Target target : targets) {
-                int scaledWidth = x / playfieldWidth;
-                int scaledHeight = y / playfieldHeight;
-                int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-                int bmpX = target.getX() * shortScale;
-                int bmpY = target.getY() * shortScale;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, shortScale * 2, shortScale * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), paint);
-
-
+                bmpX = target.getX() * blockQuadLength;
+                bmpY = target.getY() * blockQuadLength;
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), null);
             }
         }
+
         // Draw laser path
         for (int i = 0; i < playfieldWidth / 2; i++) {
             for (int j = 0; j < playfieldHeight / 2; j++) {
@@ -181,13 +176,13 @@ public class LazeView extends View {
                                     break;
                             }
 
-                            int scaledWidth = x / playfieldWidth;
-                            int scaledHeight = y / playfieldHeight;
+                            int scaledWidth = viewWidth / playfieldWidth;
+                            int scaledHeight = viewHeight / playfieldHeight;
                             int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
                             int bmpX = block.getX() * shortScale;
                             int bmpY = block.getY() * shortScale;
                             Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), shortScale * 2, shortScale * 2, true);
-                            canvas.drawBitmap(scaledBmp, bmpX - shortScale, bmpY - shortScale, paint);
+                            canvas.drawBitmap(scaledBmp, bmpX - shortScale, bmpY - shortScale, null);
 
                         }
                         break;
@@ -213,6 +208,11 @@ public class LazeView extends View {
         //DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(myShadow);
         //startDrag(null, new LazeDragShadowBuilder(imageView), null, 0);
         //View icon = findViewById(R.id.icon);
+
+
+        /*if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            event.getX(0)
+        }*/
         startDrag(null, new LazeDragShadowBuilder(this), null, 0);
         Log.e(tag, "onTouchEvent");
         return true;

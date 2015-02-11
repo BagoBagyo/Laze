@@ -47,8 +47,8 @@ public class MainActivity extends ActionBarActivity {
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
 
-        //lazeView.setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
-        ((LazeView) this.findViewById(R.id.view)).setLazeViewParams(myLazeGame.getBlockGrid(), mySources, myTargets);
+        //lazeView.initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
+        ((LazeView) this.findViewById(R.id.view)).initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
         myLazeGame.update();
         //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
