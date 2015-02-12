@@ -28,12 +28,9 @@ public class LazeView extends View {
     private int blockQuadLength;
     private int columnWidth;
     private int rowHeight;
-    private int getBlockQuadLength;
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
-    private int bmpX;
-    private int bmpY;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
     private Bitmap bmp = bmpOpen;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
@@ -69,16 +66,15 @@ public class LazeView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         Log.e(tag, "entering onDraw");
-
         viewWidth = getWidth();
         viewHeight = getHeight();
-
         playfieldWidth = blockGrid.length * 2;
         playfieldHeight = blockGrid[0].length * 2;
         columnWidth = viewWidth / playfieldWidth;
         rowHeight = viewHeight / playfieldHeight;
         blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
 
+        // Draw blocks
         for (int i = 0; i < playfieldWidth / 2; i++) {
             for (int j = 0; j < playfieldHeight / 2; j++) {
                 Block block = blockGrid[i][j];
@@ -101,12 +97,10 @@ public class LazeView extends View {
 
                         break;
                 }
-
-
                 int blockX = block.getX() * blockQuadLength;
                 int blockY = block.getY() * blockQuadLength;
-                Bitmap blockBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(blockBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
             }
         }
         // Draw sources
@@ -122,10 +116,10 @@ public class LazeView extends View {
                     default:
                         break;
                 }
-                bmpX = source.getX() * blockQuadLength;
-                bmpY = source.getY() * blockQuadLength;
+                int bmpX = source.getX() * blockQuadLength;
+                int bmpY = source.getY() * blockQuadLength;
                 Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), null);
+                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
             }
         }
 
@@ -133,10 +127,10 @@ public class LazeView extends View {
         if (targets != null) {
             bmp = bmpTarget;
             for (Target target : targets) {
-                bmpX = target.getX() * blockQuadLength;
-                bmpY = target.getY() * blockQuadLength;
+                int bmpX = target.getX() * blockQuadLength;
+                int bmpY = target.getY() * blockQuadLength;
                 Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - (scaledBmp.getWidth() / 2), bmpY - (scaledBmp.getHeight() / 2), null);
+                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
             }
         }
 
@@ -154,6 +148,7 @@ public class LazeView extends View {
                     case GLASS:
                         break;
                     case MIRROR:
+                        // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
                         break;
                     case OPEN:
                         for (Ray ray : block.getRays()) {
@@ -175,15 +170,10 @@ public class LazeView extends View {
                                     Log.e(tag, "Invalid Direction in onDraw() Draw laser path. (OPEN)");
                                     break;
                             }
-
-                            int scaledWidth = viewWidth / playfieldWidth;
-                            int scaledHeight = viewHeight / playfieldHeight;
-                            int shortScale = (scaledWidth <= scaledHeight) ? scaledWidth : scaledHeight;
-                            int bmpX = block.getX() * shortScale;
-                            int bmpY = block.getY() * shortScale;
-                            Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), shortScale * 2, shortScale * 2, true);
-                            canvas.drawBitmap(scaledBmp, bmpX - shortScale, bmpY - shortScale, null);
-
+                            int bmpX = block.getX() * blockQuadLength;
+                            int bmpY = block.getY() * blockQuadLength;
+                            Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), blockQuadLength * 2, blockQuadLength * 2, true);
+                            canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                         }
                         break;
                     case WORMHOLE:
@@ -191,11 +181,8 @@ public class LazeView extends View {
                     default:
                         break;
                 }
-
             }
         }
-        super.onDraw(canvas);
-
     }
 
     @Override
@@ -210,9 +197,10 @@ public class LazeView extends View {
         //View icon = findViewById(R.id.icon);
 
 
-        /*if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            event.getX(0)
-        }*/
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            float fingerX = event.getX(0);
+            float fingerY = event.getY(0);
+        }
         startDrag(null, new LazeDragShadowBuilder(this), null, 0);
         Log.e(tag, "onTouchEvent");
         return true;
