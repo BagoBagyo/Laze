@@ -75,9 +75,8 @@ public class LazeView extends View {
         blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
 
         // Draw blocks
-        for (int i = 0; i < playfieldWidth / 2; i++) {
-            for (int j = 0; j < playfieldHeight / 2; j++) {
-                Block block = blockGrid[i][j];
+        for (Block[] blockArray: blockGrid) {
+            for (Block block : blockArray) {
                 switch (block.getType()) {
                     case OPEN:
                         bmp = bmpOpen;
@@ -135,10 +134,8 @@ public class LazeView extends View {
         }
 
         // Draw laser path
-        for (int i = 0; i < playfieldWidth / 2; i++) {
-            for (int j = 0; j < playfieldHeight / 2; j++) {
-                Block block = blockGrid[i][j];
-
+        for (Block[] blockArray: blockGrid) {
+            for (Block block : blockArray) {
                 int rayDir = 0;
                 switch (block.getType()) {
                     case BLACKHOLE:
@@ -200,6 +197,11 @@ public class LazeView extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             float fingerX = event.getX(0);
             float fingerY = event.getY(0);
+            for (Block[] blockArray: blockGrid) {
+                for (Block block : blockArray) {
+
+                }
+            }
         }
         startDrag(null, new LazeDragShadowBuilder(this), null, 0);
         Log.e(tag, "onTouchEvent");
