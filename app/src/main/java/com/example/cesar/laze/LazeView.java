@@ -74,7 +74,9 @@ public class LazeView extends View {
         columnWidth = viewWidth / playfieldWidth;
         rowHeight = viewHeight / playfieldHeight;
         blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
-
+        if (blockQuadLength == 0) {
+            Log.e(tag, "onDraw: blockQuadLength=null");
+        }
         // Draw blocks
         for (Block[] blockArray : blockGrid) {
             for (Block block : blockArray) {
@@ -188,15 +190,18 @@ public class LazeView extends View {
         Log.d(tag, "onTouchEvent");
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            setLastTouchedBmp(event.getX(), event.getY());
-            if (lastTouchedBmp != null) {
-                startDrag(null, new LazeDragShadowBuilder(this), null, 0);
-                return true;
-            } else {
-                Log.e(tag, "onTouchEvent: could not find touched block");
-                return false;
+            if (event.getX() < (playfieldWidth * blockQuadLength) && event.getY() < (playfieldHeight * blockQuadLength)) {
+                setLastTouchedBmp(event.getX(), event.getY());
+                if (lastTouchedBmp != null) {
+                    startDrag(null, new LazeDragShadowBuilder(this), null, 0);
+                    return true;
+                } else {
+                    Log.e(tag, "onTouchEvent: could not find touched block");
+                    return false;
+                }
             }
-        } else return false;
+        }
+        return false;
     }
 
     public Bitmap getLastTouchedBmp() {
@@ -204,16 +209,16 @@ public class LazeView extends View {
     }
 
     private void setLastTouchedBmp(float fingerX, float fingerY) {
-        int blockXStart;
-        int blockYStart;
+        int blockXStart = 0;
+        int blockYStart = 0;
         int blockXEnd = 0;
         int blockYEnd = 0;
         for (Block[] blockArray : blockGrid) {
             for (Block block : blockArray) {
-                blockXStart = block.getX() * blockQuadLength;
-                blockYStart = block.getY() * blockQuadLength;
-                blockXEnd = blockXStart + blockQuadLength;
-                blockYEnd = blockYStart + blockQuadLength;
+                blockXStart = block.getX() * blockQuadLength - blockQuadLength;
+                blockYStart = block.getY() * blockQuadLength - blockQuadLength;
+                blockXEnd = blockXStart + blockQuadLength * 2;
+                blockYEnd = blockYStart + blockQuadLength * 2;
 
                 lastTouchedBmp = null;
                 if ((fingerX >= blockXStart) && (fingerX <= blockXEnd) &&
@@ -236,15 +241,18 @@ public class LazeView extends View {
                         default:
                             break;
                     }
+                    if (lastTouchedBmp == null) {
+                        Log.e(tag, "setLastTouchBmp: lastTouchBmp == null");
+                    }
                     return;
                 }
             }
         }
-        Log.d(tag, "onTouchEvent: ==> blockQuadLength:" + blockQuadLength);
-        Log.d(tag, "onTouchEvent: fingerX:" + fingerX);
-        Log.d(tag, "onTouchEvent: fingerY:" + fingerY);
-        Log.d(tag, "onTouchEvent: blockXEnd:" + blockXEnd);
-        Log.d(tag, "onTouchEvent: blockYEnd:" + blockYEnd);
+        Log.e(tag, "setLastTouchBmp: Couldn't find touched block");
+        Log.e(tag, "onTouchEvent: fingerX:" + fingerX);
+        Log.e(tag, "onTouchEvent: fingerY:" + fingerY);
+        Log.e(tag, "onTouchEvent: viewWidth:" + viewWidth);
+        Log.e(tag, "onTouchEvent: viewHeight:" + viewHeight);
     }
 
     @Override
