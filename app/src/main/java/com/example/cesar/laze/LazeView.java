@@ -199,7 +199,11 @@ public class LazeView extends View {
             float fingerY = event.getY(0);
             for (Block[] blockArray: blockGrid) {
                 for (Block block : blockArray) {
-
+					if ((fingerX >= block.getX()) && (fingerX <= (block.getX() + blockQuadLength)) &&
+						(fingerY >= block.getY()) && (fingerY <= (block.getY() + blockQuadLength))) {
+						
+						
+					}
                 }
             }
         }
