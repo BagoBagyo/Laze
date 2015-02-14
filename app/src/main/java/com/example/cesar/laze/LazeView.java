@@ -32,7 +32,8 @@ public class LazeView extends View {
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
-    private Bitmap bmp = bmpOpen;
+    private Bitmap tempBmp = null;
+    private Bitmap lastTouchedBmp = null;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
     //Bitmap bmpWormhole = BitmapFactory.decodeResource(getResources(), R.drawable.wormhole);
@@ -65,7 +66,7 @@ public class LazeView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.e(tag, "entering onDraw");
+        Log.d(tag, "entering onDraw");
         viewWidth = getWidth();
         viewHeight = getHeight();
         playfieldWidth = blockGrid.length * 2;
@@ -75,14 +76,14 @@ public class LazeView extends View {
         blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
 
         // Draw blocks
-        for (Block[] blockArray: blockGrid) {
+        for (Block[] blockArray : blockGrid) {
             for (Block block : blockArray) {
                 switch (block.getType()) {
                     case OPEN:
-                        bmp = bmpOpen;
+                        tempBmp = bmpOpen;
                         break;
                     case MIRROR:
-                        bmp = bmpMirror;
+                        tempBmp = bmpMirror;
                         break;
                     case GLASS:
                         break;
@@ -98,7 +99,7 @@ public class LazeView extends View {
                 }
                 int blockX = block.getX() * blockQuadLength;
                 int blockY = block.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
                 canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
             }
         }
@@ -107,34 +108,34 @@ public class LazeView extends View {
             for (Ray source : sources) {
                 switch (source.getType()) {
                     case RED:
-                        bmp = bmpSource;
+                        tempBmp = bmpSource;
                         break;
                     case GREEN:
-                        bmp = bmpSource;
+                        tempBmp = bmpSource;
                         break;
                     default:
                         break;
                 }
                 int bmpX = source.getX() * blockQuadLength;
                 int bmpY = source.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
                 canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
             }
         }
 
         // Draw targets
         if (targets != null) {
-            bmp = bmpTarget;
+            tempBmp = bmpTarget;
             for (Target target : targets) {
                 int bmpX = target.getX() * blockQuadLength;
                 int bmpY = target.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(bmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
                 canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
             }
         }
 
         // Draw laser path
-        for (Block[] blockArray: blockGrid) {
+        for (Block[] blockArray : blockGrid) {
             for (Block block : blockArray) {
                 int rayDir = 0;
                 switch (block.getType()) {
@@ -184,38 +185,72 @@ public class LazeView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //View myShadow = (View) findViewById(R.id.view);
-        //ImageView imageView = (ImageView) findViewById(R.id.imageViewBmp);
-        //imageView.setImageBitmap(bmpMirror);
-        //ImageView imageView = new ImageView(getContext());
-        //imageView.setImageBitmap(bmpMirror);
-        //DragShadowBuilder dragShadowBuilder = new DragShadowBuilder(myShadow);
-        //startDrag(null, new LazeDragShadowBuilder(imageView), null, 0);
-        //View icon = findViewById(R.id.icon);
-
+        Log.d(tag, "onTouchEvent");
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            float fingerX = event.getX(0);
-            float fingerY = event.getY(0);
-            for (Block[] blockArray: blockGrid) {
-                for (Block block : blockArray) {
-					if ((fingerX >= block.getX()) && (fingerX <= (block.getX() + blockQuadLength)) &&
-						(fingerY >= block.getY()) && (fingerY <= (block.getY() + blockQuadLength))) {
-						
-						
-					}
+            setLastTouchedBmp(event.getX(), event.getY());
+            if (lastTouchedBmp != null) {
+                startDrag(null, new LazeDragShadowBuilder(this), null, 0);
+                return true;
+            } else {
+                Log.e(tag, "onTouchEvent: could not find touched block");
+                return false;
+            }
+        } else return false;
+    }
+
+    public Bitmap getLastTouchedBmp() {
+        return lastTouchedBmp;
+    }
+
+    private void setLastTouchedBmp(float fingerX, float fingerY) {
+        int blockXStart;
+        int blockYStart;
+        int blockXEnd = 0;
+        int blockYEnd = 0;
+        for (Block[] blockArray : blockGrid) {
+            for (Block block : blockArray) {
+                blockXStart = block.getX() * blockQuadLength;
+                blockYStart = block.getY() * blockQuadLength;
+                blockXEnd = blockXStart + blockQuadLength;
+                blockYEnd = blockYStart + blockQuadLength;
+
+                lastTouchedBmp = null;
+                if ((fingerX >= blockXStart) && (fingerX <= blockXEnd) &&
+                        (fingerY >= blockYStart) && (fingerY <= blockYEnd)) {
+                    switch (block.getType()) {
+                        case BLACKHOLE:
+                            break;
+                        case CRYSTAL:
+                            break;
+                        case GLASS:
+                            break;
+                        case MIRROR:
+                            lastTouchedBmp = bmpMirror;
+                            break;
+                        case OPEN:
+                            lastTouchedBmp = bmpOpen;
+                            break;
+                        case WORMHOLE:
+                            break;
+                        default:
+                            break;
+                    }
+                    return;
                 }
             }
         }
-        startDrag(null, new LazeDragShadowBuilder(this), null, 0);
-        Log.e(tag, "onTouchEvent");
-        return true;
+        Log.d(tag, "onTouchEvent: ==> blockQuadLength:" + blockQuadLength);
+        Log.d(tag, "onTouchEvent: fingerX:" + fingerX);
+        Log.d(tag, "onTouchEvent: fingerY:" + fingerY);
+        Log.d(tag, "onTouchEvent: blockXEnd:" + blockXEnd);
+        Log.d(tag, "onTouchEvent: blockYEnd:" + blockYEnd);
     }
 
     @Override
     public boolean onDragEvent(DragEvent event) {
         final int action = event.getAction();
-        Log.e(tag, "onDragEvent:" + event.toString());
+        //Log.d(tag, "onDragEvent:" + event.toString());
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
                 return true;
