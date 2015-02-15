@@ -36,9 +36,9 @@ public class LazeDragShadowBuilder extends View.DragShadowBuilder {
         int width, height;
 
         // Sets the width of the shadow to that of the last touched Bmp's
-        width = ((Bitmap) (((LazeView) getView()).getLastTouchedBmp())).getWidth();
+        width = ((Bitmap) (((LazeView) getView()).getLastBlockTouchedBmp())).getWidth();
         // Sets the height of the shadow to that of the last touched Bmp's
-        height = ((Bitmap) (((LazeView) getView()).getLastTouchedBmp())).getHeight();
+        height = ((Bitmap) (((LazeView) getView()).getLastBlockTouchedBmp())).getHeight();
         // Sets the size parameter's width and height values. These get back to the system
         // through the size parameter.
         size.set(width, height);
@@ -51,6 +51,6 @@ public class LazeDragShadowBuilder extends View.DragShadowBuilder {
     @Override
     public void onDrawShadow(Canvas canvas) {
         Log.d(tag, "entering onDrawShadow");
-        canvas.drawBitmap(((LazeView) getView()).getLastTouchedBmp(), 0, 0, null);
+        canvas.drawBitmap(((LazeView) getView()).getLastBlockTouchedBmp(), 0, 0, null);
     }
 }

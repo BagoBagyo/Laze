@@ -15,7 +15,9 @@ public class MainActivity extends ActionBarActivity {
     final static String tag = "LAZE";
     final static int blockGridWidth = 6;
     final static int blockGridHeight = 6;
-
+    LazeGame myLazeGame;
+    ArrayDeque<Ray> mySources;
+    ArrayDeque<Target> myTargets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +32,11 @@ public class MainActivity extends ActionBarActivity {
         //lazeView.invalidate();
 
 
-        ArrayDeque<Ray> mySources = new ArrayDeque<>();
+        mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
         mySources.add(new Ray(2, 1, Ray.Type.RED, 135));
 
-        ArrayDeque<Target> myTargets = new ArrayDeque<>();
+        myTargets = new ArrayDeque<>();
         myTargets.add(new Target(3, 12, false));
         myTargets.add(new Target(8, 5, false));
         myTargets.add(new Target(11, 10, false));
@@ -42,15 +44,20 @@ public class MainActivity extends ActionBarActivity {
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);
 
-        LazeGame myLazeGame = new LazeGame(blockGridWidth, blockGridHeight, mySources, myTargets);
+        myLazeGame = new LazeGame(blockGridWidth, blockGridHeight, mySources, myTargets);
 
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
 
-        //lazeView.initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
         ((LazeView) this.findViewById(R.id.view)).initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
+
+        updateLaze();
+
+        Log.d(tag, "onCreate(): Finished onCreate");
+    }
+
+    public void updateLaze() {
         myLazeGame.update();
-        //Log.d(tag, "myLazeGame: " + myLazeGame.toString());
         if (myLazeGame.allTargetsHit()) {
             Toast.makeText(this, "YOU WON!", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You won! All targets were hit! myTargets: " + myTargets);
@@ -60,10 +67,7 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-
-        Log.d(tag, "onCreate(): Finished onCreate");
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,5 +1,6 @@
 package com.example.cesar.laze;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,10 +32,10 @@ public class LazeView extends View {
     private Block[][] blockGrid;
     private ArrayDeque<Ray> sources;
     private ArrayDeque<Target> targets;
+    private Bitmap tempBmp;
+    private Block lastBlockTouched;
+    private Bitmap lastBlockTouchedBmp;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
-    private Bitmap tempBmp = null;
-	private Block lastBlockTouched;
-    private Bitmap lastTouchedBmp = null;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
     //Bitmap bmpWormhole = BitmapFactory.decodeResource(getResources(), R.drawable.wormhole);
@@ -192,8 +193,10 @@ public class LazeView extends View {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (event.getX() < (playfieldWidth * blockQuadLength) && event.getY() < (playfieldHeight * blockQuadLength)) {
-                setLastTouchedBmp(event.getX(), event.getY());
-                if (lastTouchedBmp != null) {
+                lastBlockTouched = null;
+                lastBlockTouched = getLastBlockTouched(event.getX(), event.getY());
+                if (lastBlockTouched != null) {
+                    setLastBlockTouchedBmp(lastBlockTouched);
                     startDrag(null, new LazeDragShadowBuilder(this), null, 0);
                     return true;
                 } else {
@@ -205,57 +208,59 @@ public class LazeView extends View {
         return false;
     }
 
-    public Bitmap getLastTouchedBmp() {
-        return lastTouchedBmp;
+    public Bitmap getLastBlockTouchedBmp() {
+        return lastBlockTouchedBmp;
     }
 
-    private void setLastTouchedBmp(float fingerX, float fingerY) {
-        int blockXStart = 0;
-        int blockYStart = 0;
-        int blockXEnd = 0;
-        int blockYEnd = 0;
+    private void setLastBlockTouchedBmp(Block block) {
+        lastBlockTouchedBmp = null;
+        switch (block.getType()) {
+            case BLACKHOLE:
+                break;
+            case CRYSTAL:
+                break;
+            case GLASS:
+                break;
+            case MIRROR:
+                lastBlockTouchedBmp = bmpMirror;
+                break;
+            case OPEN:
+                lastBlockTouchedBmp = bmpOpen;
+                break;
+            case WORMHOLE:
+                break;
+            default:
+                break;
+        }
+        if (lastBlockTouchedBmp == null) {
+            Log.e(tag, "setLastBlockTouchedBmp: could not find lastBlockTouched Bmp");
+        }
+        return;
+    }
+
+    private Block getLastBlockTouched(float fingerX, float fingerY) {
+        int blockXStart;
+        int blockYStart;
+        int blockXEnd;
+        int blockYEnd;
         for (Block[] blockArray : blockGrid) {
             for (Block block : blockArray) {
                 blockXStart = block.getX() * blockQuadLength - blockQuadLength;
                 blockYStart = block.getY() * blockQuadLength - blockQuadLength;
                 blockXEnd = blockXStart + blockQuadLength * 2;
                 blockYEnd = blockYStart + blockQuadLength * 2;
-
-                lastTouchedBmp = null;
-				lastBlockTouched = null;
                 if ((fingerX >= blockXStart) && (fingerX <= blockXEnd) &&
                         (fingerY >= blockYStart) && (fingerY <= blockYEnd)) {
-                    lastBlockTouched = block;
-					switch (block.getType()) {
-                        case BLACKHOLE:
-                            break;
-                        case CRYSTAL:
-                            break;
-                        case GLASS:
-                            break;
-                        case MIRROR:
-                            lastTouchedBmp = bmpMirror;
-                            break;
-                        case OPEN:
-                            lastTouchedBmp = bmpOpen;
-                            break;
-                        case WORMHOLE:
-                            break;
-                        default:
-                            break;
-                    }
-                    if (lastTouchedBmp == null) {
-                        Log.e(tag, "setLastTouchBmp: lastTouchBmp == null");
-                    }
-                    return;
+                    return block;
                 }
             }
         }
-        Log.e(tag, "setLastTouchBmp: Couldn't find touched block");
-        Log.e(tag, "onTouchEvent: fingerX:" + fingerX);
-        Log.e(tag, "onTouchEvent: fingerY:" + fingerY);
-        Log.e(tag, "onTouchEvent: viewWidth:" + viewWidth);
-        Log.e(tag, "onTouchEvent: viewHeight:" + viewHeight);
+        Log.e(tag, "getLastBlockTouched: Couldn't find touched block");
+        Log.e(tag, "getLastBlockTouched: fingerX:" + fingerX);
+        Log.e(tag, "getLastBlockTouched: fingerY:" + fingerY);
+        Log.e(tag, "getLastBlockTouched: viewWidth:" + viewWidth);
+        Log.e(tag, "getLastBlockTouched: viewHeight:" + viewHeight);
+        return null;
     }
 
     @Override
@@ -265,28 +270,26 @@ public class LazeView extends View {
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
                 return true;
-			case DragEvent.ACTION_DROP:
-				float x = event.getX();
-				float y = event.getY();
-				Log.d(tag, "x= " + x);
-				Log.d(tag, "y= " + y);
-				int blockX = (int) (event.getX() /blockQuadLength);
-                int blockY = (int) (event.getY() /blockQuadLength);
-                Log.d(tag, "blockX= " + blockX);
-                Log.d(tag, "blockY= " + blockY);
-                Block block = blockGrid[blockX][blockY];
-				swapBlocks(lastBlockTouched, block);
+            case DragEvent.ACTION_DROP:
+                Block startDragBlock = lastBlockTouched;
+                float x = event.getX();
+                float y = event.getY();
+                Log.d(tag, "x= " + x);
+                Log.d(tag, "y= " + y);
+                Block endDragBlock = getLastBlockTouched(x, y);
+                swapBlockGridBlocks(startDragBlock, endDragBlock);
+                ((Activity) getContext()).update();
                 return true;
-
         }
-        return true;
+        return false;
     }
-	
-	public void swapBlocks(Block blockA, Block blockB) {
-		blockGrid[blockA.getX() / 2][blockA.getY() / 2] = blockB;
-		blockGrid[blockB.getX() / 2][blockB.getY() / 2] = blockA;
+
+    public void swapBlockGridBlocks(Block blockA, Block blockB) {
+        blockGrid[blockA.getX() / 2][blockA.getY() / 2] = blockB;
+        blockGrid[blockB.getX() / 2][blockB.getY() / 2] = blockA;
+        Location tempLocation = new Location(blockA.getX(), blockA.getY());
         blockA.setLocation(blockB.getX(), blockB.getY());
-        blockB.setLocation(blockA.getX(), blockA.getY());
-	}
+        blockB.setLocation(tempLocation.getX(), tempLocation.getY());
+    }
 }
 
