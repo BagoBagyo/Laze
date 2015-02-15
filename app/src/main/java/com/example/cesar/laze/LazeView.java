@@ -270,17 +270,23 @@ public class LazeView extends View {
 				float y = event.getY();
 				Log.d(tag, "x= " + x);
 				Log.d(tag, "y= " + y);
-				Block block = blockGrid[(int) event.getX() / blockQuadLength][(int) event.getY() / blockQuadLength];
+				int blockX = (int) (event.getX() /blockQuadLength);
+                int blockY = (int) (event.getY() /blockQuadLength);
+                Log.d(tag, "blockX= " + blockX);
+                Log.d(tag, "blockY= " + blockY);
+                Block block = blockGrid[blockX][blockY];
 				swapBlocks(lastBlockTouched, block);
+                return true;
 
         }
         return true;
     }
 	
 	public void swapBlocks(Block blockA, Block blockB) {
-		Block tempBlock = blockA;
-		blockA = blockB;
-		blockB = tempBlock;
+		blockGrid[blockA.getX() / 2][blockA.getY() / 2] = blockB;
+		blockGrid[blockB.getX() / 2][blockB.getY() / 2] = blockA;
+        blockA.setLocation(blockB.getX(), blockB.getY());
+        blockB.setLocation(blockA.getX(), blockA.getY());
 	}
 }
 
