@@ -33,6 +33,7 @@ public class LazeView extends View {
     private ArrayDeque<Target> targets;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
     private Bitmap tempBmp = null;
+	private Block lastBlockTouched;
     private Bitmap lastTouchedBmp = null;
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
@@ -221,9 +222,11 @@ public class LazeView extends View {
                 blockYEnd = blockYStart + blockQuadLength * 2;
 
                 lastTouchedBmp = null;
+				lastBlockTouched = null;
                 if ((fingerX >= blockXStart) && (fingerX <= blockXEnd) &&
                         (fingerY >= blockYStart) && (fingerY <= blockYEnd)) {
-                    switch (block.getType()) {
+                    lastBlockTouched = block;
+					switch (block.getType()) {
                         case BLACKHOLE:
                             break;
                         case CRYSTAL:
@@ -262,10 +265,22 @@ public class LazeView extends View {
         switch (action) {
             case DragEvent.ACTION_DRAG_STARTED:
                 return true;
+			case DragEvent.ACTION_DROP:
+				float x = event.getX();
+				float y = event.getY();
+				Log.d(tag, "x= " + x);
+				Log.d(tag, "y= " + y);
+				Block block = blockGrid[(int) event.getX() / blockQuadLength][(int) event.getY() / blockQuadLength];
+				swapBlocks(lastBlockTouched, block);
 
         }
         return true;
     }
-
+	
+	public void swapBlocks(Block blockA, Block blockB) {
+		Block tempBlock = blockA;
+		blockA = blockB;
+		blockB = tempBlock;
+	}
 }
 
