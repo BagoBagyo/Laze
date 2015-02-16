@@ -278,7 +278,7 @@ public class LazeView extends View {
                 Log.d(tag, "y= " + y);
                 Block endDragBlock = getLastBlockTouched(x, y);
                 swapBlockGridBlocks(startDragBlock, endDragBlock);
-                ((Activity) getContext()).update();
+                //((Activity) getContext()).update();
                 return true;
         }
         return false;
