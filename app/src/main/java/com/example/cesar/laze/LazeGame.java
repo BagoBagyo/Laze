@@ -187,10 +187,13 @@ public class LazeGame {
 
         block = blockGrid[blockX][blockY];
 
-        // Need to add checkSameRayExists(rayCopy) and don't push or generate exit Ray.
+        // Need to add checkRayExists() and don't push or generate exit Ray.
         // Instead just return newRays; which is empty.
         // This prevents infinite lase beam loops.
-        block.getRays().push(new Ray(rayCopy));
+        if (!duplicateRayExits(block, rayCopy)) {
+            block.getRays().push(new Ray(rayCopy));
+        }
+
 
         Log.d(tag, "propagateRay(): ray assigned to block: " + block.toString());
 
@@ -276,6 +279,13 @@ public class LazeGame {
         Log.d(tag, "propagateRay(): newRays: " + newRays.toString());
         return newRays;
     }
+
+    private boolean duplicateRayExits(Block block, Ray ray) {
+        for (Ray blockRay : block.getRays()) {
+            if (ray.equals(blockRay)) return true;
+        }
+        return false;
+}
 
     public String toString() {
         StringBuilder result = new StringBuilder();

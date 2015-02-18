@@ -26,6 +26,14 @@ public class Ray extends Location {
         direction = ray.direction;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this.getX() == ((Ray) o).getX() &&
+                this.getY() == ((Ray) o).getY() &&
+                this.getType() == ((Ray) o).getType() &&
+                this.getDirection() == ((Ray) o).getDirection();
+    }
+
     public Type getType() {
         return type;
     }
