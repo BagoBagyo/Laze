@@ -64,6 +64,13 @@ public class LazeGame {
 
     public void update() {
         ArrayDeque<Ray> currentRays = new ArrayDeque<>();
+        // Clear out all Rays
+        for (Block[] blockArray : blockGrid) {
+            for (Block block : blockArray) {
+                block.setRays(new ArrayDeque<Ray>());
+            }
+        }
+
         for (Ray ray : sources) currentRays.push(new Ray(ray));
         while (!currentRays.isEmpty()) {
             Ray ray = currentRays.pop();
@@ -123,14 +130,14 @@ public class LazeGame {
         return false;
     }
 
-    private ArrayDeque propagateRay(Ray ray) {
+    private ArrayDeque<Ray> propagateRay(Ray ray) {
         Ray rayCopy = new Ray(ray);
         int rayX = rayCopy.getX();
         int rayY = rayCopy.getY();
         int blockX = -1;
         int blockY = -1;
         Block block;
-        ArrayDeque newRays = new ArrayDeque();
+        ArrayDeque<Ray> newRays = new ArrayDeque<>();
 
         Log.d(tag, "propagateRay(): input ray: " + ray.toString());
 

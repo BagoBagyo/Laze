@@ -9,9 +9,11 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayDeque;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements Observer {
     final static String tag = "LAZE";
     final static int blockGridWidth = 6;
     final static int blockGridHeight = 6;
@@ -22,15 +24,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
-        //LazeView lazeView = new LazeView(this);
-        //lazeView.setVisibility(View.VISIBLE);
         setContentView(R.layout.activity_main);
-
-        //LazeView lazeView = new LazeView(this);
-        //setContentView(lazeView);
-        //lazeView.invalidate();
-
 
         mySources = new ArrayDeque<>();
         mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
@@ -48,8 +42,8 @@ public class MainActivity extends ActionBarActivity {
 
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
-
         ((LazeView) this.findViewById(R.id.view)).initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
+        ((LazeView) this.findViewById(R.id.view)).blockDropped.addObserver(this);
 
         updateLaze();
 
@@ -86,10 +80,16 @@ public class MainActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             updateLaze();
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        Log.d(tag, "MainActivity.update");
+        updateLaze();
+    }
 }

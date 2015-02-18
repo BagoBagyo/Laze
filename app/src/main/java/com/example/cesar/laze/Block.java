@@ -22,7 +22,7 @@ public class Block extends Location {
         this.rays = rays;
     }
 
-  Type getType() {
+    Type getType() {
         return type;
     }
 

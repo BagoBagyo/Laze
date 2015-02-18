@@ -1,6 +1,5 @@
 package com.example.cesar.laze;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,17 +10,18 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.util.ArrayDeque;
+import java.util.Observable;
 
 /**
  * Created by Cesar on 2/5/2015.
+ * LazeView custom view class
  */
 public class LazeView extends View {
     final static String tag = "LAZE";
-    static ImageView myShadow;
     Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
+    BlockDroppedObservable blockDropped;
     private int playfieldWidth;
     private int playfieldHeight;
     private int viewWidth;
@@ -44,14 +44,12 @@ public class LazeView extends View {
     private Bitmap bmpTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target);
     private Bitmap bmpLaser = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
 
-
     public LazeView(Context context) {
         super(context);
     }
 
     public LazeView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        AttributeSet myAttrs = attrs;
     }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
@@ -64,6 +62,8 @@ public class LazeView extends View {
         this.blockGrid = blockGrid;
         this.sources = sources;
         this.targets = targets;
+        blockDropped = new BlockDroppedObservable();
+
     }
 
     @Override
@@ -131,6 +131,7 @@ public class LazeView extends View {
         if (targets != null) {
             tempBmp = bmpTarget;
             for (Target target : targets) {
+                target.setHit(false);
                 int bmpX = target.getX() * blockQuadLength;
                 int bmpY = target.getY() * blockQuadLength;
                 Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
@@ -235,7 +236,6 @@ public class LazeView extends View {
         if (lastBlockTouchedBmp == null) {
             Log.e(tag, "setLastBlockTouchedBmp: could not find lastBlockTouched Bmp");
         }
-        return;
     }
 
     private Block getLastBlockTouched(float fingerX, float fingerY) {
@@ -278,7 +278,7 @@ public class LazeView extends View {
                 Log.d(tag, "y= " + y);
                 Block endDragBlock = getLastBlockTouched(x, y);
                 swapBlockGridBlocks(startDragBlock, endDragBlock);
-                //((Activity) getContext()).update();
+                blockDropped.blockDropped();
                 return true;
         }
         return false;
@@ -290,6 +290,14 @@ public class LazeView extends View {
         Location tempLocation = new Location(blockA.getX(), blockA.getY());
         blockA.setLocation(blockB.getX(), blockB.getY());
         blockB.setLocation(tempLocation.getX(), tempLocation.getY());
+    }
+
+    public class BlockDroppedObservable extends Observable {
+        public void blockDropped() {
+            setChanged();
+            notifyObservers();
+            invalidate();
+        }
     }
 }
 
