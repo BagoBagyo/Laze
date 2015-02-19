@@ -277,9 +277,11 @@ public class LazeView extends View {
                 Log.d(tag, "x= " + x);
                 Log.d(tag, "y= " + y);
                 Block endDragBlock = getLastBlockTouched(x, y);
-                swapBlockGridBlocks(startDragBlock, endDragBlock);
-                blockDropped.blockDropped();
-                return true;
+                if (endDragBlock != null) {
+					swapBlockGridBlocks(startDragBlock, endDragBlock);
+                	blockDropped.blockDropped();
+                	return true;
+				} 
         }
         return false;
     }
