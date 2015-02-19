@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
         DisplayMetrics d = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(d);
         ((LazeView) this.findViewById(R.id.view)).initLazeView(myLazeGame.getBlockGrid(), mySources, myTargets);
-        ((LazeView) this.findViewById(R.id.view)).blockDropped.addObserver(this);
+        ((LazeView) this.findViewById(R.id.view)).blockDroppedObservable.addObserver(this);
 
         updateLaze();
 

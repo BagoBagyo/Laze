@@ -21,7 +21,7 @@ import java.util.Observable;
 public class LazeView extends View {
     final static String tag = "LAZE";
     Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
-    BlockDroppedObservable blockDropped;
+    BlockDroppedObservable blockDroppedObservable;
     private int playfieldWidth;
     private int playfieldHeight;
     private int viewWidth;
@@ -46,10 +46,24 @@ public class LazeView extends View {
 
     public LazeView(Context context) {
         super(context);
+        blockDroppedObservable = new BlockDroppedObservable();
     }
 
     public LazeView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        blockDroppedObservable = new BlockDroppedObservable();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        // maximum width we should use
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+       if (width <= height) {
+           setMeasuredDimension(width, width);
+       } else {
+           setMeasuredDimension(height, height);
+       }
     }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
@@ -62,127 +76,127 @@ public class LazeView extends View {
         this.blockGrid = blockGrid;
         this.sources = sources;
         this.targets = targets;
-        blockDropped = new BlockDroppedObservable();
-
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.d(tag, "entering onDraw");
-        viewWidth = getWidth();
-        viewHeight = getHeight();
-        playfieldWidth = blockGrid.length * 2;
-        playfieldHeight = blockGrid[0].length * 2;
-        columnWidth = viewWidth / playfieldWidth;
-        rowHeight = viewHeight / playfieldHeight;
-        blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
-        if (blockQuadLength == 0) {
-            Log.e(tag, "onDraw: blockQuadLength=null");
-        }
-        // Draw blocks
-        for (Block[] blockArray : blockGrid) {
-            for (Block block : blockArray) {
-                switch (block.getType()) {
-                    case OPEN:
-                        tempBmp = bmpOpen;
-                        break;
-                    case MIRROR:
-                        tempBmp = bmpMirror;
-                        break;
-                    case GLASS:
-                        break;
-                    case CRYSTAL:
-                        break;
-                    case WORMHOLE:
-                        break;
-                    case BLACKHOLE:
-                        break;
-                    default:
+        if (!isInEditMode()) {
+            Log.d(tag, "entering onDraw");
+            viewWidth = getWidth();
+            viewHeight = getHeight();
+            playfieldWidth = blockGrid.length * 2;
+            playfieldHeight = blockGrid[0].length * 2;
+            columnWidth = viewWidth / playfieldWidth;
+            rowHeight = viewHeight / playfieldHeight;
+            blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
+            if (blockQuadLength == 0) {
+                Log.e(tag, "onDraw: blockQuadLength=null");
+            }
+            // Draw blocks
+            for (Block[] blockArray : blockGrid) {
+                for (Block block : blockArray) {
+                    switch (block.getType()) {
+                        case OPEN:
+                            tempBmp = bmpOpen;
+                            break;
+                        case MIRROR:
+                            tempBmp = bmpMirror;
+                            break;
+                        case GLASS:
+                            break;
+                        case CRYSTAL:
+                            break;
+                        case WORMHOLE:
+                            break;
+                        case BLACKHOLE:
+                            break;
+                        default:
 
-                        break;
+                            break;
+                    }
+                    int blockX = block.getX() * blockQuadLength;
+                    int blockY = block.getY() * blockQuadLength;
+                    Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                    canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
                 }
-                int blockX = block.getX() * blockQuadLength;
-                int blockY = block.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
             }
-        }
-        // Draw sources
-        if (sources != null) {
-            for (Ray source : sources) {
-                switch (source.getType()) {
-                    case RED:
-                        tempBmp = bmpSource;
-                        break;
-                    case GREEN:
-                        tempBmp = bmpSource;
-                        break;
-                    default:
-                        break;
+            // Draw sources
+            if (sources != null) {
+                for (Ray source : sources) {
+                    switch (source.getType()) {
+                        case RED:
+                            tempBmp = bmpSource;
+                            break;
+                        case GREEN:
+                            tempBmp = bmpSource;
+                            break;
+                        default:
+                            break;
+                    }
+                    int bmpX = source.getX() * blockQuadLength;
+                    int bmpY = source.getY() * blockQuadLength;
+                    Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                    canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                 }
-                int bmpX = source.getX() * blockQuadLength;
-                int bmpY = source.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
             }
-        }
 
-        // Draw targets
-        if (targets != null) {
-            tempBmp = bmpTarget;
-            for (Target target : targets) {
-                target.setHit(false);
-                int bmpX = target.getX() * blockQuadLength;
-                int bmpY = target.getY() * blockQuadLength;
-                Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
+            // Draw targets
+            if (targets != null) {
+                tempBmp = bmpTarget;
+                for (Target target : targets) {
+                    target.setHit(false);
+                    int bmpX = target.getX() * blockQuadLength;
+                    int bmpY = target.getY() * blockQuadLength;
+                    Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
+                    canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
+                }
             }
-        }
 
-        // Draw laser path
-        for (Block[] blockArray : blockGrid) {
-            for (Block block : blockArray) {
-                int rayDir = 0;
-                switch (block.getType()) {
-                    case BLACKHOLE:
-                        break;
-                    case CRYSTAL:
-                        break;
-                    case GLASS:
-                        break;
-                    case MIRROR:
-                        // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
-                        break;
-                    case OPEN:
-                        for (Ray ray : block.getRays()) {
-                            int rayX = ray.getX();
-                            switch (ray.getDirection()) {
-                                case 45:
-                                    rayDir = (rayX % 2 == 0) ? 0 : 180;
-                                    break;
-                                case 135:
-                                    rayDir = (rayX % 2 == 0) ? 270 : 90;
-                                    break;
-                                case 225:
-                                    rayDir = (rayX % 2 == 0) ? 180 : 0;
-                                    break;
-                                case 315:
-                                    rayDir = (rayX % 2 == 0) ? 90 : 270;
-                                    break;
-                                default:
-                                    Log.e(tag, "Invalid Direction in onDraw() Draw laser path. (OPEN)");
-                                    break;
+            // Draw laser path
+            for (Block[] blockArray : blockGrid) {
+                for (Block block : blockArray) {
+                    int rayDir = 0;
+                    switch (block.getType()) {
+                        case BLACKHOLE:
+                            break;
+                        case CRYSTAL:
+                            break;
+                        case GLASS:
+                            break;
+                        case MIRROR:
+                            // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
+                            break;
+                        case OPEN:
+                            for (Ray ray : block.getRays()) {
+                                int rayX = ray.getX();
+                                switch (ray.getDirection()) {
+                                    case 45:
+                                        rayDir = (rayX % 2 == 0) ? 0 : 180;
+                                        break;
+                                    case 135:
+                                        rayDir = (rayX % 2 == 0) ? 270 : 90;
+                                        break;
+                                    case 225:
+                                        rayDir = (rayX % 2 == 0) ? 180 : 0;
+                                        break;
+                                    case 315:
+                                        rayDir = (rayX % 2 == 0) ? 90 : 270;
+                                        break;
+                                    default:
+                                        Log.e(tag, "Invalid Direction in onDraw() Draw laser path. (OPEN)");
+                                        break;
+                                }
+                                int bmpX = block.getX() * blockQuadLength;
+                                int bmpY = block.getY() * blockQuadLength;
+                                Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), blockQuadLength * 2, blockQuadLength * 2, true);
+                                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                             }
-                            int bmpX = block.getX() * blockQuadLength;
-                            int bmpY = block.getY() * blockQuadLength;
-                            Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), blockQuadLength * 2, blockQuadLength * 2, true);
-                            canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
-                        }
-                        break;
-                    case WORMHOLE:
-                        break;
-                    default:
-                        break;
+                            break;
+                        case WORMHOLE:
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -278,10 +292,10 @@ public class LazeView extends View {
                 Log.d(tag, "y= " + y);
                 Block endDragBlock = getLastBlockTouched(x, y);
                 if (endDragBlock != null) {
-					swapBlockGridBlocks(startDragBlock, endDragBlock);
-                	blockDropped.blockDropped();
-                	return true;
-				} 
+                    swapBlockGridBlocks(startDragBlock, endDragBlock);
+                    blockDroppedObservable.blockDropped();
+                    return true;
+                }
         }
         return false;
     }
