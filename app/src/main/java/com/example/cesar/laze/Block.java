@@ -38,6 +38,14 @@ public class Block extends Location {
         this.rays = rays;
     }
 
+    public boolean isDraggable() {
+        return !(type == Type.OPEN) &&
+                !(type == Type.DEAD);
+    }
+
+    public boolean canBeDroppedOn() {
+        return !(type == Type.DEAD);
+    }
     @Override
     public String toString() {
         return "Block{" +
@@ -49,6 +57,6 @@ public class Block extends Location {
     }
 
     enum Type {
-        OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE
+        OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE, DEAD
     }
 }

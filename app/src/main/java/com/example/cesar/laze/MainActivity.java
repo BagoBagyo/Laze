@@ -15,8 +15,8 @@ import java.util.Observer;
 
 public class MainActivity extends ActionBarActivity implements Observer {
     final static String tag = "LAZE";
-    final static int blockGridWidth = 6;
-    final static int blockGridHeight = 6;
+    final static int blockGridWidth = 7;
+    final static int blockGridHeight = 10;
     LazeGame myLazeGame;
     ArrayDeque<Ray> mySources;
     ArrayDeque<Target> myTargets;
@@ -27,13 +27,13 @@ public class MainActivity extends ActionBarActivity implements Observer {
         setContentView(R.layout.activity_main);
 
         mySources = new ArrayDeque<>();
-        mySources.add(new Ray(12, 1, Ray.Type.RED, 225));
-        mySources.add(new Ray(2, 1, Ray.Type.RED, 135));
+        mySources.add(new Ray(10, 5, Ray.Type.RED, 225));
+        mySources.add(new Ray(4, 9, Ray.Type.RED, 135));
 
         myTargets = new ArrayDeque<>();
-        myTargets.add(new Target(3, 12, false));
+        myTargets.add(new Target(3, 8, false));
         myTargets.add(new Target(8, 5, false));
-        myTargets.add(new Target(11, 10, false));
+        myTargets.add(new Target(10, 9, false));
 
         Log.d(tag, "onCreate(): mySources: " + mySources);
         Log.d(tag, "onCreate(): myTargets: " + myTargets);

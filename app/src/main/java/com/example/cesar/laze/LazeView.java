@@ -43,6 +43,7 @@ public class LazeView extends View {
     private Bitmap bmpSource = BitmapFactory.decodeResource(getResources(), R.drawable.source);
     private Bitmap bmpTarget = BitmapFactory.decodeResource(getResources(), R.drawable.target);
     private Bitmap bmpLaser = BitmapFactory.decodeResource(getResources(), R.drawable.laser);
+    private Bitmap bmpDead = BitmapFactory.decodeResource(getResources(), R.drawable.dead);
 
     public LazeView(Context context) {
         super(context);
@@ -54,16 +55,8 @@ public class LazeView extends View {
         blockDroppedObservable = new BlockDroppedObservable();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // maximum width we should use
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-       if (width <= height) {
-           setMeasuredDimension(width, width);
-       } else {
-           setMeasuredDimension(height, height);
-       }
+    public int getBlockQuadLength() {
+        return blockQuadLength;
     }
 
     public static Bitmap RotateBitmap(Bitmap source, float angle) {
@@ -89,6 +82,7 @@ public class LazeView extends View {
             columnWidth = viewWidth / playfieldWidth;
             rowHeight = viewHeight / playfieldHeight;
             blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
+            int diffWidthHeight = rowHeight - columnWidth;
             if (blockQuadLength == 0) {
                 Log.e(tag, "onDraw: blockQuadLength=null");
             }
@@ -109,6 +103,9 @@ public class LazeView extends View {
                         case WORMHOLE:
                             break;
                         case BLACKHOLE:
+                            break;
+                        case DEAD:
+                            tempBmp = bmpDead;
                             break;
                         default:
 
@@ -167,6 +164,7 @@ public class LazeView extends View {
                             // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
                             break;
                         case OPEN:
+                        case DEAD:
                             for (Ray ray : block.getRays()) {
                                 int rayX = ray.getX();
                                 switch (ray.getDirection()) {
@@ -210,7 +208,7 @@ public class LazeView extends View {
             if (event.getX() < (playfieldWidth * blockQuadLength) && event.getY() < (playfieldHeight * blockQuadLength)) {
                 lastBlockTouched = null;
                 lastBlockTouched = getLastBlockTouched(event.getX(), event.getY());
-                if (lastBlockTouched != null) {
+                if (lastBlockTouched.isDraggable() && lastBlockTouched != null) {
                     setLastBlockTouchedBmp(lastBlockTouched);
                     startDrag(null, new LazeDragShadowBuilder(this), null, 0);
                     return true;
@@ -243,6 +241,9 @@ public class LazeView extends View {
                 lastBlockTouchedBmp = bmpOpen;
                 break;
             case WORMHOLE:
+                break;
+            case DEAD:
+                lastBlockTouchedBmp = bmpDead;
                 break;
             default:
                 break;
@@ -291,7 +292,7 @@ public class LazeView extends View {
                 Log.d(tag, "x= " + x);
                 Log.d(tag, "y= " + y);
                 Block endDragBlock = getLastBlockTouched(x, y);
-                if (endDragBlock != null) {
+                if (endDragBlock != null && endDragBlock.canBeDroppedOn()) {
                     swapBlockGridBlocks(startDragBlock, endDragBlock);
                     blockDroppedObservable.blockDropped();
                     return true;

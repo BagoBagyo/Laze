@@ -30,9 +30,20 @@ public class LazeGame {
                 blockGrid[i][j] = new Block(i * 2 + 1, j * 2 + 1, Block.Type.OPEN, new ArrayDeque<Ray>());
             }
         }
-        blockGrid[0][0] = new Block(1, 1, Block.Type.MIRROR, new ArrayDeque<Ray>());
-        blockGrid[5][5] = new Block(11, 11, Block.Type.MIRROR, new ArrayDeque<Ray>());
-        blockGrid[0][5] = new Block(1, 11, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[1][2] = new Block(3, 5, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[4][4] = new Block(9, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[1][4] = new Block(3, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        // Create Dead zone
+        for (int i = 0; i < blockGridWidth; i++) {
+            blockGrid[i][0] = new Block(i * 2 + 1, 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[i][1] = new Block(i * 2 + 1, 3, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[i][blockGridHeight - 2] = new Block(i * 2 + 1, (blockGridHeight - 2) * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[i][blockGridHeight - 1] = new Block(i * 2 + 1, (blockGridHeight - 1) * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+        }
+        for (int i = 1; i < blockGridHeight - 1; i++) {
+            blockGrid[0][i] = new Block(1, i * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[blockGridWidth - 1][i] = new Block((blockGridWidth - 1) * 2 + 1, i * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+        }
 
         this.sources = sources;
         this.targets = targets;
@@ -192,6 +203,10 @@ public class LazeGame {
         // This prevents infinite lase beam loops.
         if (!duplicateRayExits(block, rayCopy)) {
             block.getRays().push(new Ray(rayCopy));
+        } else {
+            // duplicate ray already in block, no need to propagate this ray.
+            Log.d(tag, "propagateRay(): duplicate ray already in block, no need to propagate this ray.");
+            return newRays;
         }
 
 
@@ -245,6 +260,7 @@ public class LazeGame {
                 }
                 break;
             case OPEN:
+            case DEAD:
                 switch (rayCopy.getDirection()) {
                     case 45:
                         rayCopy.setX(rayCopy.getX() + 1);
