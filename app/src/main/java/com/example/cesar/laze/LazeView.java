@@ -26,6 +26,8 @@ public class LazeView extends View {
     private int playfieldHeight;
     private int viewWidth;
     private int viewHeight;
+    private int playfieldWidthPadding;
+    private int playfieldHeightPadding;
     private int blockQuadLength;
     private int columnWidth;
     private int rowHeight;
@@ -82,7 +84,11 @@ public class LazeView extends View {
             columnWidth = viewWidth / playfieldWidth;
             rowHeight = viewHeight / playfieldHeight;
             blockQuadLength = (columnWidth <= rowHeight) ? columnWidth : rowHeight;
-            int diffWidthHeight = rowHeight - columnWidth;
+            playfieldWidthPadding = (viewWidth % (blockQuadLength * 2)) / 2;
+            //playfieldWidthPadding = -50;
+            playfieldHeightPadding = (viewHeight % (blockQuadLength * 2)) / 2;
+            //playfieldHeightPadding = 0;
+            Matrix matrix = new Matrix();
             if (blockQuadLength == 0) {
                 Log.e(tag, "onDraw: blockQuadLength=null");
             }
@@ -114,7 +120,11 @@ public class LazeView extends View {
                     int blockX = block.getX() * blockQuadLength;
                     int blockY = block.getY() * blockQuadLength;
                     Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                    canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
+                    matrix.reset();
+                    matrix.setTranslate(playfieldWidthPadding, playfieldHeightPadding);
+                    matrix.postTranslate(blockX - blockQuadLength, blockY - blockQuadLength);
+                    canvas.drawBitmap(scaledBmp, matrix, null);
+                    //canvas.drawBitmap(scaledBmp, blockX - blockQuadLength, blockY - blockQuadLength, null);
                 }
             }
             // Draw sources
@@ -133,7 +143,11 @@ public class LazeView extends View {
                     int bmpX = source.getX() * blockQuadLength;
                     int bmpY = source.getY() * blockQuadLength;
                     Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                    canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
+                    matrix.reset();
+                    matrix.setTranslate(playfieldWidthPadding, playfieldHeightPadding);
+                    matrix.postTranslate(bmpX - blockQuadLength, bmpY - blockQuadLength);
+                    canvas.drawBitmap(scaledBmp, matrix, null);
+                    //canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                 }
             }
 
@@ -145,7 +159,11 @@ public class LazeView extends View {
                     int bmpX = target.getX() * blockQuadLength;
                     int bmpY = target.getY() * blockQuadLength;
                     Bitmap scaledBmp = Bitmap.createScaledBitmap(tempBmp, blockQuadLength * 2, blockQuadLength * 2, true);
-                    canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
+                    matrix.reset();
+                    matrix.setTranslate(playfieldWidthPadding, playfieldHeightPadding);
+                    matrix.postTranslate(bmpX - blockQuadLength, bmpY - blockQuadLength);
+                    canvas.drawBitmap(scaledBmp, matrix, null);
+                    //canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                 }
             }
 
@@ -187,7 +205,11 @@ public class LazeView extends View {
                                 int bmpX = block.getX() * blockQuadLength;
                                 int bmpY = block.getY() * blockQuadLength;
                                 Bitmap scaledBmp = Bitmap.createScaledBitmap(RotateBitmap(bmpLaser, rayDir), blockQuadLength * 2, blockQuadLength * 2, true);
-                                canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
+                                matrix.reset();
+                                matrix.setTranslate(playfieldWidthPadding, playfieldHeightPadding);
+                                matrix.postTranslate(bmpX - blockQuadLength, bmpY - blockQuadLength);
+                                canvas.drawBitmap(scaledBmp, matrix, null);
+                                //canvas.drawBitmap(scaledBmp, bmpX - blockQuadLength, bmpY - blockQuadLength, null);
                             }
                             break;
                         case WORMHOLE:

@@ -15,8 +15,8 @@ import java.util.Observer;
 
 public class MainActivity extends ActionBarActivity implements Observer {
     final static String tag = "LAZE";
-    final static int blockGridWidth = 7;
-    final static int blockGridHeight = 10;
+    final static int blockGridWidth = 5;//7,5,5 //6,4,4 //5,3,3
+    final static int blockGridHeight = 7;//10,8,6 //9,7,5 //7,5,3
     LazeGame myLazeGame;
     ArrayDeque<Ray> mySources;
     ArrayDeque<Target> myTargets;
