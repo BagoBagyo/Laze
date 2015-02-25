@@ -1,5 +1,6 @@
 package com.example.cesar.laze;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
@@ -15,16 +16,19 @@ import java.util.Observer;
 
 public class MainActivity extends ActionBarActivity implements Observer {
     final static String tag = "LAZE";
-    final static int blockGridWidth = 5;//7,5,5 //6,4,4 //5,3,3
-    final static int blockGridHeight = 7;//10,8,6 //9,7,5 //7,5,3
+    final static int blockGridWidth = 7;//7,5,5 //6,4,4 //5,3,3
+    final static int blockGridHeight = 10;//10,8,6 //9,7,5 //7,5,3
     LazeGame myLazeGame;
     ArrayDeque<Ray> mySources;
     ArrayDeque<Target> myTargets;
-
+    MediaPlayer mp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mp.setVolume((float) .1, (float) .1);
 
         mySources = new ArrayDeque<>();
         mySources.add(new Ray(10, 5, Ray.Type.RED, 225));
@@ -52,6 +56,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
 
     public void updateLaze() {
         myLazeGame.update();
+        mp.start();
         if (myLazeGame.allTargetsHit()) {
             Toast.makeText(this, "YOU WON!", Toast.LENGTH_LONG).show();
             Log.d(tag, "onCreate(): You won! All targets were hit! myTargets: " + myTargets);
