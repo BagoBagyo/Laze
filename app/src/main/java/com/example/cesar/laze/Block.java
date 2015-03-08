@@ -46,6 +46,7 @@ public class Block extends Location {
     public boolean canBeDroppedOn() {
         return !(type == Type.DEAD);
     }
+
     @Override
     public String toString() {
         return "Block{" +

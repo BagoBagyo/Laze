@@ -22,6 +22,7 @@ public class MainActivity extends ActionBarActivity implements Observer {
     ArrayDeque<Ray> mySources;
     ArrayDeque<Target> myTargets;
     MediaPlayer mp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

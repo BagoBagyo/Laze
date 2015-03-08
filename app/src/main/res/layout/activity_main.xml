@@ -2,16 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@android:color/holo_green_light">
+    android:background="@android:color/holo_green_light"
+    tools:context=".MainActivity">
 
     <view
+        android:id="@+id/view"
+        class="com.example.cesar.laze.LazeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.example.cesar.laze.LazeView"
-        android:id="@+id/view"
         android:layout_alignParentBottom="false"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="-75dp"
-        android:layout_marginTop="-75dp" />
+        android:layout_marginLeft="-72dp"
+        android:layout_marginTop="-72dp" />
 </RelativeLayout>

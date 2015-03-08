@@ -303,7 +303,7 @@ public class LazeGame {
             if (ray.equals(blockRay)) return true;
         }
         return false;
-}
+    }
 
     public String toString() {
         StringBuilder result = new StringBuilder();
