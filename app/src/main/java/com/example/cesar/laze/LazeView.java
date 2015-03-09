@@ -326,8 +326,8 @@ public class LazeView extends View {
                 targetYStart = j * blockViewQuadWidth - blockViewHalfQuadLength / 2 + playfieldHeightPadding;
                 targetXEnd = targetXStart + blockViewHalfQuadLength;
                 targetYEnd = targetYStart + blockViewHalfQuadLength;
-                if ((fingerX >= targetXStart) && (fingerX <= targetXEnd) &&
-                        (fingerY >= targetYStart) && (fingerY <= targetYEnd)) {
+                if (locationOnBlockFace(i, j) && fingerX >= targetXStart && fingerX <= targetXEnd &&
+                        fingerY >= targetYStart && fingerY <= targetYEnd) {
                     Log.d(tag, "getTargetLocationTouched: Touched a Target region.");
                     Log.d(tag, "getTargetLocationTouched: fingerX:" + fingerX);
                     Log.d(tag, "getTargetLocationTouched: fingerY:" + fingerY);
@@ -342,6 +342,11 @@ public class LazeView extends View {
         Log.e(tag, "getLastTargetTouched: viewWidth:" + viewWidth);
         Log.e(tag, "getLastTargetTouched: viewHeight:" + viewHeight);
         return null;
+    }
+
+    // Check whether the given location is on a playfield face.
+        private boolean locationOnBlockFace(int x, int y) {
+        return (x + y) % 2 != 0 && x < blockGrid.length * 2 + 1 && y < blockGrid[0].length * 2 + 1;
     }
 
     private Target getLastTargetTouched(float fingerX, float fingerY) {
@@ -376,10 +381,12 @@ public class LazeView extends View {
 
                 Target startDragTarget = lastTargetTouched;
                 Location endDragTargetLocation = getTargetLocationTouched(x, y);
-                if (startDragTarget != null && endDragTargetLocation != null) {
-                    startDragTarget.setLocation(endDragTargetLocation.getX(), endDragTargetLocation.getY());
-                    blockDroppedObservable.blockDropped();
-                    return true;
+                if (startDragTarget != null) {
+                    if (endDragTargetLocation != null) {
+                        startDragTarget.setLocation(endDragTargetLocation.getX(), endDragTargetLocation.getY());
+                        blockDroppedObservable.blockDropped();
+                        return true;
+                    } else return false;
                 }
 
                 Block startDragBlock = lastBlockTouched;
