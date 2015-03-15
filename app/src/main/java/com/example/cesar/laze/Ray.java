@@ -50,6 +50,11 @@ public class Ray extends Location {
         this.direction = direction;
     }
 
+    public void rotateDirection() {
+        if (direction == 315) direction = 45;
+        else direction += 90;
+    }
+
     @Override
     public String toString() {
         return "Ray{" +

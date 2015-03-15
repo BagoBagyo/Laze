@@ -37,8 +37,8 @@ public class LazeView extends View {
     private Bitmap tempBmp;
     private Block lastBlockTouched;
     private Target lastTargetTouched;
+    private Ray lastSourceTouched;
     private Bitmap lastObjectouchedBmp;
-    private Bitmap lastTargetTouchedBmp;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
     //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
@@ -230,17 +230,26 @@ public class LazeView extends View {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (event.getX() < (playfieldColumns * blockViewQuadWidth) && event.getY() < (playfieldRows * blockViewQuadWidth)) {
+
                 lastTargetTouched = null;
-                lastTargetTouched = getLastTargetTouched(event.getX(), event.getY());
+                lastTargetTouched = getTargetTouched(event.getX(), event.getY());
                 if (lastTargetTouched != null) {
                     setLastObjectTouchedBmpAsTarget();
                     startDrag(null, new LazeDragShadowBuilder(this), null, 0);
                     return true;
                 }
 
+                lastSourceTouched = null;
+                lastSourceTouched = getSourceTouched(event.getX(), event.getY());
+                if (lastSourceTouched != null) {
+                    setLastObjectTouchedBmpAsSource();
+                    startDrag(null, new LazeDragShadowBuilder(this), null, 0);
+                    return true;
+                }
+
                 lastBlockTouched = null;
                 lastBlockTouched = getLastBlockTouched(event.getX(), event.getY());
-                if (lastBlockTouched.isDraggable() && lastBlockTouched != null) {
+                if (lastBlockTouched.isDraggable()) {
                     setLastObjectTouchedBmpAsBlock(lastBlockTouched);
                     startDrag(null, new LazeDragShadowBuilder(this), null, 0);
                     return true;
@@ -289,6 +298,10 @@ public class LazeView extends View {
         lastObjectouchedBmp = bmpTarget;
     }
 
+    private void setLastObjectTouchedBmpAsSource() {
+        lastObjectouchedBmp = bmpSource;
+    }
+
     private Block getLastBlockTouched(float fingerX, float fingerY) {
         int blockXStart;
         int blockYStart;
@@ -314,54 +327,71 @@ public class LazeView extends View {
         return null;
     }
 
-    private Location getTargetLocationTouched(float fingerX, float fingerY) {
-        int targetXStart;
-        int targetYStart;
-        int targetXEnd;
-        int targetYEnd;
+    private Location getBlockFaceLocationTouched(float fingerX, float fingerY) {
+        int locationXStart;
+        int locationYStart;
+        int locationXEnd;
+        int locationYEnd;
         int blockViewHalfQuadLength = blockViewQuadWidth / 2;
         for (int i = 0; i < blockGrid.length * 2 + 1; i++) {
             for (int j = 0; j < blockGrid[0].length * 2 + 1; j++) {
-                targetXStart = i * blockViewQuadWidth - blockViewHalfQuadLength / 2 + playfieldWidthPadding;
-                targetYStart = j * blockViewQuadWidth - blockViewHalfQuadLength / 2 + playfieldHeightPadding;
-                targetXEnd = targetXStart + blockViewHalfQuadLength;
-                targetYEnd = targetYStart + blockViewHalfQuadLength;
-                if (locationOnBlockFace(i, j) && fingerX >= targetXStart && fingerX <= targetXEnd &&
-                        fingerY >= targetYStart && fingerY <= targetYEnd) {
-                    Log.d(tag, "getTargetLocationTouched: Touched a Target region.");
-                    Log.d(tag, "getTargetLocationTouched: fingerX:" + fingerX);
-                    Log.d(tag, "getTargetLocationTouched: fingerY:" + fingerY);
+                locationXStart = i * blockViewQuadWidth - blockViewHalfQuadLength / 2 + playfieldWidthPadding;
+                locationYStart = j * blockViewQuadWidth - blockViewHalfQuadLength / 2 + playfieldHeightPadding;
+                locationXEnd = locationXStart + blockViewHalfQuadLength;
+                locationYEnd = locationYStart + blockViewHalfQuadLength;
+                if (locationOnBlockFace(i, j) && fingerX >= locationXStart && fingerX <= locationXEnd &&
+                        fingerY >= locationYStart && fingerY <= locationYEnd) {
+                    Log.d(tag, "getBlockFaceLocationTouched: Touched a location region.");
+                    Log.d(tag, "getBlockFaceLocationTouched: fingerX:" + fingerX);
+                    Log.d(tag, "getBlockFaceLocationTouched: fingerY:" + fingerY);
                     return new Location(i, j);
                 }
 
             }
         }
-        Log.e(tag, "getTargetLocationTouched: Finger not within a target region");
-        Log.e(tag, "getLastTargetTouched: fingerX:" + fingerX);
-        Log.e(tag, "getLastTargetTouched: fingerY:" + fingerY);
-        Log.e(tag, "getLastTargetTouched: viewWidth:" + viewWidth);
-        Log.e(tag, "getLastTargetTouched: viewHeight:" + viewHeight);
+        Log.e(tag, "getBlockFaceLocationTouched: Finger not within a block face location");
+        Log.e(tag, "getBlockFaceLocationTouched: fingerX:" + fingerX);
+        Log.e(tag, "getBlockFaceLocationTouched: fingerY:" + fingerY);
+        Log.e(tag, "getBlockFaceLocationTouched: viewWidth:" + viewWidth);
+        Log.e(tag, "getBlockFaceLocationTouched: viewHeight:" + viewHeight);
         return null;
     }
 
-    // Check whether the given location is on a playfield face.
-        private boolean locationOnBlockFace(int x, int y) {
+    // Check whether the given location is on a playfield block face.
+    private boolean locationOnBlockFace(int x, int y) {
         return (x + y) % 2 != 0 && x < blockGrid.length * 2 + 1 && y < blockGrid[0].length * 2 + 1;
     }
 
-    private Target getLastTargetTouched(float fingerX, float fingerY) {
-        Location location = getTargetLocationTouched(fingerX, fingerY);
+    private Target getTargetTouched(float fingerX, float fingerY) {
+        Location location = getBlockFaceLocationTouched(fingerX, fingerY);
         if (location != null) {
             for (Target target : targets) {
                 if (location.getX() == target.getX() && location.getY() == target.getY())
                     return target;
             }
         }
-        Log.e(tag, "getLastTargetTouched: Couldn't find touched Target");
-        Log.e(tag, "getLastTargetTouched: fingerX:" + fingerX);
-        Log.e(tag, "getLastTargetTouched: fingerY:" + fingerY);
-        Log.e(tag, "getLastTargetTouched: viewWidth:" + viewWidth);
-        Log.e(tag, "getLastTargetTouched: viewHeight:" + viewHeight);
+        Log.e(tag, "getTargetTouched: Couldn't find touched Target");
+        Log.e(tag, "getTargetTouched: fingerX:" + fingerX);
+        Log.e(tag, "getTargetTouched: fingerY:" + fingerY);
+        Log.e(tag, "getTargetTouched: viewWidth:" + viewWidth);
+        Log.e(tag, "getTargetTouched: viewHeight:" + viewHeight);
+        return null;
+
+    }
+
+    private Ray getSourceTouched(float fingerX, float fingerY) {
+        Location location = getBlockFaceLocationTouched(fingerX, fingerY);
+        if (location != null) {
+            for (Ray source : sources) {
+                if (location.getX() == source.getX() && location.getY() == source.getY())
+                    return source;
+            }
+        }
+        Log.e(tag, "getSourceTouched: Couldn't find touched Target");
+        Log.e(tag, "getSourceTouched: fingerX:" + fingerX);
+        Log.e(tag, "getSourceTouched: fingerY:" + fingerY);
+        Log.e(tag, "getSourceTouched: viewWidth:" + viewWidth);
+        Log.e(tag, "getSourceTouched: viewHeight:" + viewHeight);
         return null;
 
     }
@@ -380,10 +410,26 @@ public class LazeView extends View {
                 Log.d(tag, "y= " + y);
 
                 Target startDragTarget = lastTargetTouched;
-                Location endDragTargetLocation = getTargetLocationTouched(x, y);
+                Location endDragTargetLocation = getBlockFaceLocationTouched(x, y);
                 if (startDragTarget != null) {
                     if (endDragTargetLocation != null) {
                         startDragTarget.setLocation(endDragTargetLocation.getX(), endDragTargetLocation.getY());
+                        blockDroppedObservable.blockDropped();
+                        return true;
+                    } else return false;
+                }
+
+                Ray startDragSource = lastSourceTouched;
+                Location endDragSourceLocation = getBlockFaceLocationTouched(x, y);
+                if (startDragSource != null) {
+                    if (endDragTargetLocation != null) {
+                        if (startDragSource.getX() == endDragSourceLocation.getX() && startDragSource.getY() == endDragSourceLocation.getY()) {
+                            startDragSource.rotateDirection();
+                            blockDroppedObservable.blockDropped();
+                            return true;
+                        }
+
+                        startDragSource.setLocation(endDragSourceLocation.getX(), endDragSourceLocation.getY());
                         blockDroppedObservable.blockDropped();
                         return true;
                     } else return false;
@@ -398,12 +444,6 @@ public class LazeView extends View {
                 }
         }
         return false;
-    }
-
-    public void swapBlockGridTargets(Target targetA, Target targetB) {
-        Location tempLocation = new Location(targetA.getX(), targetA.getY());
-        targetA.setLocation(targetB.getX(), targetB.getY());
-        targetB.setLocation(tempLocation.getX(), tempLocation.getY());
     }
 
     public void swapBlockGridBlocks(Block blockA, Block blockB) {
