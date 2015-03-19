@@ -112,7 +112,7 @@ public class LazeView extends View {
                             break;
                         case BLACKHOLE:
                             break;
-                        case DEAD:
+                        case DEADZONE:
                             tempBmp = bmpDead;
                             break;
                         default:
@@ -184,7 +184,7 @@ public class LazeView extends View {
                             // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
                             break;
                         case OPEN:
-                        case DEAD:
+                        case DEADZONE:
                             for (Ray ray : block.getRays()) {
                                 int rayX = ray.getX();
                                 switch (ray.getDirection()) {
@@ -283,7 +283,7 @@ public class LazeView extends View {
                 break;
             case WORMHOLE:
                 break;
-            case DEAD:
+            case DEADZONE:
                 lastObjectouchedBmp = bmpDead;
                 break;
             default:

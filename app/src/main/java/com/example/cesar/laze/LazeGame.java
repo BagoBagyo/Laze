@@ -35,14 +35,14 @@ public class LazeGame {
         blockGrid[1][4] = new Block(3, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
         // Create Dead zone
         for (int i = 0; i < blockGridWidth; i++) {
-            blockGrid[i][0] = new Block(i * 2 + 1, 1, Block.Type.DEAD, new ArrayDeque<Ray>());
-            blockGrid[i][1] = new Block(i * 2 + 1, 3, Block.Type.DEAD, new ArrayDeque<Ray>());
-            blockGrid[i][blockGridHeight - 2] = new Block(i * 2 + 1, (blockGridHeight - 2) * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
-            blockGrid[i][blockGridHeight - 1] = new Block(i * 2 + 1, (blockGridHeight - 1) * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[i][0] = new Block(i * 2 + 1, 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
+            blockGrid[i][1] = new Block(i * 2 + 1, 3, Block.Type.DEADZONE, new ArrayDeque<Ray>());
+            blockGrid[i][blockGridHeight - 2] = new Block(i * 2 + 1, (blockGridHeight - 2) * 2 + 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
+            blockGrid[i][blockGridHeight - 1] = new Block(i * 2 + 1, (blockGridHeight - 1) * 2 + 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
         }
         for (int i = 1; i < blockGridHeight - 1; i++) {
-            blockGrid[0][i] = new Block(1, i * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
-            blockGrid[blockGridWidth - 1][i] = new Block((blockGridWidth - 1) * 2 + 1, i * 2 + 1, Block.Type.DEAD, new ArrayDeque<Ray>());
+            blockGrid[0][i] = new Block(1, i * 2 + 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
+            blockGrid[blockGridWidth - 1][i] = new Block((blockGridWidth - 1) * 2 + 1, i * 2 + 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
         }
         blockGrid[0][0] = new Block(1, 1, Block.Type.MIRROR, new ArrayDeque<Ray>());
         blockGrid[blockGridWidth - 1][blockGridHeight - 1] = new Block((blockGridWidth - 1) * 2 + 1, (blockGridHeight - 1) * 2 + 1, Block.Type.MIRROR, new ArrayDeque<Ray>());
@@ -262,7 +262,7 @@ public class LazeGame {
                 }
                 break;
             case OPEN:
-            case DEAD:
+            case DEADZONE:
                 switch (rayCopy.getDirection()) {
                     case 45:
                         rayCopy.setX(rayCopy.getX() + 1);

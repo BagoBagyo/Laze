@@ -40,11 +40,11 @@ public class Block extends Location {
 
     public boolean isDraggable() {
         return !(type == Type.OPEN) &&
-                !(type == Type.DEAD);
+                !(type == Type.DEADZONE);
     }
 
     public boolean canBeDroppedOn() {
-        return !(type == Type.DEAD);
+        return !(type == Type.DEADZONE);
     }
 
     @Override
@@ -58,6 +58,6 @@ public class Block extends Location {
     }
 
     enum Type {
-        OPEN, MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE, DEAD
+        OPEN, MIRROR, FIXED_MIRROR, GLASS, CRYSTAL, WORMHOLE, BLACKHOLE, DEADZONE
     }
 }
