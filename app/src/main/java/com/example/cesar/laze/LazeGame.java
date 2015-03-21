@@ -32,7 +32,7 @@ public class LazeGame {
         }
         blockGrid[1][2] = new Block(3, 5, Block.Type.MIRROR, new ArrayDeque<Ray>());
         blockGrid[4][4] = new Block(9, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
-        blockGrid[1][4] = new Block(3, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[1][4] = new Block(3, 9, Block.Type.GLASS, new ArrayDeque<Ray>());
         // Create Dead zone
         for (int i = 0; i < blockGridWidth; i++) {
             blockGrid[i][0] = new Block(i * 2 + 1, 1, Block.Type.DEADZONE, new ArrayDeque<Ray>());
@@ -221,7 +221,33 @@ public class LazeGame {
             case CRYSTAL:
                 break;
             case GLASS:
-                break;
+                Ray rayCopy2 = new Ray(rayCopy); // Glass has to exit rays.
+                switch (rayCopy2.getDirection()) {
+                    case 45:
+                        rayCopy2.setX(rayCopy2.getX() + 1);
+                        rayCopy2.setY(rayCopy2.getY() - 1);
+                        newRays.push(rayCopy2);
+                        break;
+                    case 135:
+                        rayCopy2.setX(rayCopy2.getX() + 1);
+                        rayCopy2.setY(rayCopy2.getY() + 1);
+                        newRays.push(rayCopy2);
+                        break;
+                    case 225:
+                        rayCopy2.setX(rayCopy2.getX() - 1);
+                        rayCopy2.setY(rayCopy2.getY() + 1);
+                        newRays.push(rayCopy2);
+                        break;
+                    case 315:
+                        rayCopy2.setX(rayCopy2.getX() - 1);
+                        rayCopy2.setY(rayCopy2.getY() - 1);
+                        newRays.push(rayCopy2);
+                        break;
+                    default:
+                        Log.e(tag, "Invalid direction in propagateRay().3");
+                        break;
+                }
+                //Glass has Mirror properties, so fall through to MIRROR case.
             case MIRROR:
                 switch (rayCopy.getDirection()) {
                     case 45:

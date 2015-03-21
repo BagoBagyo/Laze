@@ -40,7 +40,7 @@ public class LazeView extends View {
     private Ray lastSourceTouched;
     private Bitmap lastObjectouchedBmp;
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
-    //Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
+    private Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
     //Bitmap bmpWormhole = BitmapFactory.decodeResource(getResources(), R.drawable.wormhole);
     //Bitmap bmpBlackhole = BitmapFactory.decodeResource(getResources(), R.drawable.blackhole);
@@ -104,7 +104,10 @@ public class LazeView extends View {
                         case MIRROR:
                             tempBmp = bmpMirror;
                             break;
+                        case FIXED_MIRROR:
+                            break;
                         case GLASS:
+                            tempBmp = bmpGlass;
                             break;
                         case CRYSTAL:
                             break;
@@ -178,12 +181,11 @@ public class LazeView extends View {
                             break;
                         case CRYSTAL:
                             break;
-                        case GLASS:
-                            break;
                         case MIRROR:
                             // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
                             break;
                         case OPEN:
+                        case GLASS:
                         case DEADZONE:
                             for (Ray ray : block.getRays()) {
                                 int rayX = ray.getX();
@@ -274,6 +276,7 @@ public class LazeView extends View {
             case CRYSTAL:
                 break;
             case GLASS:
+                lastObjectouchedBmp = bmpGlass;
                 break;
             case MIRROR:
                 lastObjectouchedBmp = bmpMirror;
