@@ -20,7 +20,6 @@ import java.util.Observable;
  */
 public class LazeView extends View {
     final static String tag = "LAZE";
-    Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
     BlockDroppedObservable blockDroppedObservable;
     private int playfieldColumns;
     private int playfieldRows;
@@ -39,6 +38,8 @@ public class LazeView extends View {
     private Target lastTargetTouched;
     private Ray lastSourceTouched;
     private Bitmap lastObjectouchedBmp;
+    private Bitmap bmpMirror = BitmapFactory.decodeResource(getResources(), R.drawable.mirror);
+    private Bitmap bmpFixedMirror = BitmapFactory.decodeResource(getResources(), R.drawable.fixed_mirror);
     private Bitmap bmpOpen = BitmapFactory.decodeResource(getResources(), R.drawable.open);
     private Bitmap bmpGlass = BitmapFactory.decodeResource(getResources(), R.drawable.glass);
     //Bitmap bmpCrystal= BitmapFactory.decodeResource(getResources(), R.drawable.crystal);
@@ -105,6 +106,7 @@ public class LazeView extends View {
                             tempBmp = bmpMirror;
                             break;
                         case FIXED_MIRROR:
+                            tempBmp = bmpFixedMirror;
                             break;
                         case GLASS:
                             tempBmp = bmpGlass;
@@ -182,6 +184,9 @@ public class LazeView extends View {
                         case CRYSTAL:
                             break;
                         case MIRROR:
+                            // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
+                            break;
+                        case FIXED_MIRROR:
                             // Mirrors reflect lasers, so there should not be any rays attached to glass blocks.
                             break;
                         case OPEN:
@@ -280,6 +285,9 @@ public class LazeView extends View {
                 break;
             case MIRROR:
                 lastObjectouchedBmp = bmpMirror;
+                break;
+            case FIXED_MIRROR:
+                lastObjectouchedBmp = bmpFixedMirror;
                 break;
             case OPEN:
                 lastObjectouchedBmp = bmpOpen;

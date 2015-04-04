@@ -31,7 +31,7 @@ public class LazeGame {
             }
         }
         blockGrid[1][2] = new Block(3, 5, Block.Type.MIRROR, new ArrayDeque<Ray>());
-        blockGrid[4][4] = new Block(9, 9, Block.Type.MIRROR, new ArrayDeque<Ray>());
+        blockGrid[4][4] = new Block(9, 9, Block.Type.FIXED_MIRROR, new ArrayDeque<Ray>());
         blockGrid[1][4] = new Block(3, 9, Block.Type.GLASS, new ArrayDeque<Ray>());
         // Create Dead zone
         for (int i = 0; i < blockGridWidth; i++) {
@@ -249,6 +249,7 @@ public class LazeGame {
                 }
                 //Glass has Mirror properties, so fall through to MIRROR case.
             case MIRROR:
+            case FIXED_MIRROR:
                 switch (rayCopy.getDirection()) {
                     case 45:
                         if (rayX % 2 == 0) {

@@ -40,11 +40,13 @@ public class Block extends Location {
 
     public boolean isDraggable() {
         return !(type == Type.OPEN) &&
-                !(type == Type.DEADZONE);
+                !(type == Type.DEADZONE) &&
+                !(type == Type.FIXED_MIRROR);
     }
 
     public boolean canBeDroppedOn() {
-        return !(type == Type.DEADZONE);
+        return !(type == Type.DEADZONE) &&
+                !(type == Type.FIXED_MIRROR);
     }
 
     @Override
