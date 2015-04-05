@@ -219,9 +219,46 @@ public class LazeGame {
             case BLACKHOLE:
                 break;
             case CRYSTAL:
+                switch (rayCopy.getDirection()) {
+                    case 45:
+                        if (rayX % 2 == 0) {
+                            rayCopy.setX(rayCopy.getX() + 2);
+                        } else {
+                            rayCopy.setY(rayCopy.getY() - 2);
+                        }
+                        newRays.push(rayCopy);
+                        break;
+                    case 135:
+                        if (rayX % 2 == 0) {
+                            rayCopy.setY(rayCopy.getY() + 2);
+                        } else {
+                            rayCopy.setX(rayCopy.getX() + 2);
+                        }
+                        newRays.push(rayCopy);
+                        break;
+                    case 225:
+                        if (rayX % 2 == 0) {
+                            rayCopy.setY(rayCopy.getY() + 2);
+                        } else {
+                            rayCopy.setX(rayCopy.getX() - 2);
+                        }
+                        newRays.push(rayCopy);
+                        break;
+                    case 315:
+                        if (rayX % 2 == 0) {
+                            rayCopy.setY(rayCopy.getY() - 2);
+                        } else {
+                            rayCopy.setX(rayCopy.getX() - 2);
+                        }
+                        newRays.push(rayCopy);
+                        break;
+                    default:
+                        Log.e(tag, "Invalid direction in propagateRay().3");
+                        break;
+                }
                 break;
             case GLASS:
-                Ray rayCopy2 = new Ray(rayCopy); // Glass has to exit rays.
+                Ray rayCopy2 = new Ray(rayCopy); // Glass has two exit rays.
                 switch (rayCopy2.getDirection()) {
                     case 45:
                         rayCopy2.setX(rayCopy2.getX() + 1);
